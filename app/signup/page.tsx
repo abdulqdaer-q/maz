@@ -4,7 +4,7 @@ function page() {
   return (
     <div className="bg-gray-200 pb-6">
       <Navbar />
-      <main className="bg-white h-full m-20 rounded-3xl pt-4 ">
+      <main className="bg-white h-full m-20 rounded-3xl pt-4 shadow-md">
         <h2 className="text-blue-500 text-4xl text-start ml-10">Signup</h2>
         <h1 className="text-sm text-gray-700 text-start  mt-2 ml-10">
           Enter your information to be able to post on our website.
@@ -59,7 +59,10 @@ function page() {
                 type="text"
                 className="h-10 rounded-md border border-black ml-6"
               />
-              <CostumFileInput />
+              <CostumFileInput
+                first="p-4 h-28 flex flex-col items-center gap-2 bg-blue-100 text-blue-400 rounded-lg cursor-pointer border border-dashed mx-4 border-gray-600"
+                second="p-4 mt-4 bg-blue-100 overflow-hidden text-ellipsis "
+              />
             </div>
           </div>
 
@@ -100,7 +103,10 @@ function page() {
                 className="h-10 rounded-md border border-black ml-6"
               />
 
-              <CostumFileInput />
+              <CostumFileInput
+                first="p-4 h-28 flex flex-col items-center gap-2 bg-blue-100 text-blue-400 rounded-lg cursor-pointer border border-dashed mx-4 border-gray-600"
+                second="p-4 mt-4 bg-blue-100 overflow-hidden text-ellipsis "
+              />
             </div>
 
             <p className="col-span-2 col-start-2 mt-4">

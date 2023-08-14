@@ -1,7 +1,8 @@
 "use client";
 import React, { useRef, useState } from "react";
 import { CloudArrowUpIcon } from "@heroicons/react/24/outline";
-const CustomFileInput = () => {
+type style = { first: string; second: string };
+const CustomFileInput = ({ first, second }: style) => {
   const ref = useRef<HTMLInputElement>(null);
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -16,10 +17,7 @@ const CustomFileInput = () => {
   };
   return (
     <div>
-      <div
-        onClick={handleClick}
-        className="p-4 h-28 flex flex-col items-center gap-2 bg-blue-100 text-blue-400 rounded-lg cursor-pointer border border-dashed mx-4 border-gray-600"
-      >
+      <div onClick={handleClick} className={first}>
         <CloudArrowUpIcon className="w-6 h-6" />
         <span>Choose a file to upload</span>
         <input
@@ -31,7 +29,7 @@ const CustomFileInput = () => {
       </div>
 
       {!!selectedFiles.length && (
-        <div className="p-4 mt-4 bg-blue-100 overflow-hidden text-ellipsis ">
+        <div className={second}>
           <p>Selected Files:</p>
           {selectedFiles.map((file, i) => {
             return (
