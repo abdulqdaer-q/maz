@@ -1,8 +1,16 @@
+"use client";
+import { useState } from "react";
 import Image from "next/image";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import {
+  MagnifyingGlassIcon,
+  BellIcon,
+  EnvelopeIcon,
+  UserCircleIcon,
+} from "@heroicons/react/24/solid";
 
 import Dropdown from "./Dropdown";
 function Navbar() {
+  const [signedIn, setSignedIn] = useState(false);
   return (
     <div className="border-b border-gray-800 shadow-md  flex justify-start items-center sticky top-0 bg-white z-10">
       {/* Logo */}
@@ -25,17 +33,25 @@ function Navbar() {
         <a href="" className="text-sm  text-gray-600 hover:bg-gray-50">
           Companies
         </a>
+      </div>
+      {/* Login */}
 
-        {/* Login */}
-      </div>
-      <div className="space-x-6 ml-auto mr-2">
-        <button className="border border-blue-500 rounded-3xl px-8 py-1 text-blue-500">
-          Login
-        </button>
-        <button className=" bg-blue-500 rounded-3xl px-8 py-1 text-white ">
-          Sign Up
-        </button>
-      </div>
+      {!signedIn ? (
+        <div className=" flex space-x-6 ml-auto mr-2 items-center">
+          <BellIcon className="h-full w-8 mr-1 text-gray-600" />
+          <EnvelopeIcon className="h-full w-6 mr-1 text-gray-600" />
+          <UserCircleIcon className="h-full w-16 mr-1 text-gray-600" />
+        </div>
+      ) : (
+        <div className="space-x-6 ml-auto mr-2">
+          <button className="border border-blue-500 rounded-3xl px-8 py-1 text-blue-500">
+            Login
+          </button>
+          <button className=" bg-blue-500 rounded-3xl px-8 py-1 text-white ">
+            Sign Up
+          </button>
+        </div>
+      )}
     </div>
   );
 }
