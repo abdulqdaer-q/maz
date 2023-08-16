@@ -1,127 +1,216 @@
+"use client";
+import React from "react";
+import { Form, Input, DatePicker, Upload, Button, Row, Col, Card, UploadProps, message } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import Navbar from "@/components/Navbar";
-import CostumFileInput from "@/components/CostumFileInput";
-function page() {
+import { API } from "@/utils/constant";
+import { axios } from "@/utils/axios";
+import { User } from "@/types/User";
+
+const layout = {
+  labelCol: { span: 8 },
+  wrapperCol: { span: 16 },
+};
+
+const tailLayout = {
+  wrapperCol: { offset: 8, span: 16 },
+};
+
+const MyForm = () => {
+  const onFinish =async (values: any) => {
+    const registerBody = {
+      email: values.email,
+      username: values.username,
+      password: values.password,
+    };
+    const {data} = await axios.post<{user:User}>('/auth/local/register', registerBody);
+    console.log({data});
+    
+    const {id} = data.user;
+    
+  };
+
+  const uploadProps: UploadProps = {
+    customRequest: (options) => {
+      const fd = new FormData();
+      fd.append('files', options.file)
+      axios.post('/upload', fd).then(e => {
+        options!.onSuccess!(e.data)
+      }).catch(err=>{
+        options.onError!({
+          status: 400,
+          name: 'error',
+          method:'POST',
+          url: '/upload',
+          message: 'upload failed'
+        })
+      })
+    },
+    onChange(info) {
+      console.log(info);
+      
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === 'done') {
+        console.log({info});
+        
+        message.success(`${info.file.name} file uploaded successfully`);
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  }
+
   return (
-    <div className="bg-gray-200 pb-6">
+    <>
       <Navbar />
-      <main className="bg-white h-full m-20 rounded-3xl pt-4 shadow-md">
-        <h2 className="text-blue-500 text-4xl text-start ml-10">Signup</h2>
-        <h1 className="text-sm text-gray-700 text-start  mt-2 ml-10">
-          Enter your information to be able to post on our website.
-        </h1>
-
-        <form action="" className="grid grid-cols-2">
-          <div className="grid grid-cols-3 mt-8">
-            <div className="col-span-1 space-y-10">
-              <label className="flex w-full mb-5 justify-center ">
-                First Name
-              </label>
-              <label className="flex w-full mb-5 justify-center">
-                Last Name
-              </label>
-              <label className="flex w-full mb-5 justify-center">
-                Birthday
-              </label>
-              <label className="flex w-full mb-5 justify-center">
-                Location
-              </label>
-              <label className="flex w-full mb-5 justify-center">Mobile</label>
-              <label className="flex w-full mb-5 justify-center">
-                Job Title
-              </label>
-              <label className="flex w-full mb-5 justify-center">
-                Your Profile Image
-              </label>
-            </div>
-            <div className="col-span-2 space-y-6">
-              <input
-                type="text"
-                className="h-10 rounded-md border border-black ml-6"
-              />
-              <input
-                type="text"
-                className="h-10 rounded-md border border-black ml-6"
-              />
-              <input
-                type="date"
-                className="h-10 rounded-md border border-black ml-6"
-              />
-              <input
-                type="text"
-                className="h-10 rounded-md border border-black ml-6"
-              />
-              <input
-                type="number"
-                className="h-10 rounded-md border border-black ml-6"
-                placeholder="+963"
-              />
-              <input
-                type="text"
-                className="h-10 rounded-md border border-black ml-6"
-              />
-              <CostumFileInput
-                first="p-4 h-28 flex flex-col items-center gap-2 bg-blue-100 text-blue-400 rounded-lg cursor-pointer border border-dashed mx-4 border-gray-600"
-                second="p-4 mt-4 bg-blue-100 overflow-hidden text-ellipsis "
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 mt-8">
-            <div className="col-span-1 space-y-10">
-              <label className="flex w-full mb-5 justify-center items-start ">
-                Email
-              </label>
-              <label className="flex w-full mb-5 justify-center items-start mt-4">
-                Password
-              </label>
-              <label className="flex w-full mb-5 justify-center items-start mt-4">
-                Confirm
-              </label>
-              <label className="flex w-full mb-5 justify-center items-start mt-4">
-                ID Number
-              </label>
-              <label className="flex w-full mb-5 justify-center items-start mt-4">
-                CV
-              </label>
-            </div>
-
-            <div className="col-span-2 space-y-6">
-              <input
-                type="email"
-                className="h-10 rounded-md border border-black ml-6"
-              />
-              <input
-                type="password"
-                className="h-10 rounded-md border border-black ml-6"
-              />
-              <input
-                type="password"
-                className="h-10 rounded-md border border-black ml-6"
-              />
-              <input
-                type="text"
-                className="h-10 rounded-md border border-black ml-6"
-              />
-
-              <CostumFileInput
-                first="p-4 h-28 flex flex-col items-center gap-2 bg-blue-100 text-blue-400 rounded-lg cursor-pointer border border-dashed mx-4 border-gray-600"
-                second="p-4 mt-4 bg-blue-100 overflow-hidden text-ellipsis "
-              />
-            </div>
-
-            <p className="col-span-2 col-start-2 mt-4">
-              if you do not have a CV,
-              <a className="text-blue-400 hover:cursor-pointer">click here</a>
-              to create one
-            </p>
-            <button className="w-4/5 bg-blue-600 h-12 mb-20 text-white text-lg col-span-2 col-start-2 mt-20">
-              Submit
-            </button>
-          </div>
-        </form>
-      </main>
-    </div>
+      <div style={{ backgroundColor: "#EFF3F5", minHeight: "75vh", padding: '4rem' }}>
+        <Card  title="Sign Up"  bordered={false}>
+          <Form {...layout} onFinish={onFinish}>
+            <Row gutter={120}>
+              <Col span={11}>
+                <Form.Item
+                  label="First Name"
+                  name="firstName"
+                  rules={[
+                    { required: true, message: "Please input your first name" },
+                  ]}
+                >
+                  <Input size="large" />
+                </Form.Item>
+              </Col>
+              <Col span={11}>
+                <Form.Item
+                  label="Last Name"
+                  name="lastName"
+                  rules={[
+                    { required: true, message: "Please input your last name" },
+                  ]}
+                >
+                  <Input size="large" />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={120}>
+              <Col span={11}>
+                <Form.Item
+                  label="Password"
+                  name="password"
+                  rules={[
+                    { required: true, message: "Please input your password" },
+                    {  min: 8, message: "Password must be at least 8 characters!" }
+                  ]}
+                >
+                  <Input.Password size="large" />
+                </Form.Item>
+              </Col>
+              <Col span={11}>
+                <Form.Item
+                  label="Password Confirm"
+                  name="passwordConfirm"
+                  dependencies={["password"]}
+                  rules={[
+                    { required: true, message: "Please confirm your password" },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || getFieldValue("password") === value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(
+                          new Error("The two passwords do not match")
+                        );
+                      },
+                    }),
+                  ]}
+                >
+                  <Input.Password size="large" />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={120}>
+              <Col span={11}>
+                <Form.Item
+                  label="Birthday"
+                  name="birthday"
+                  rules={[
+                    { required: true, message: "Please select your birthday" },
+                  ]}
+                >
+                  <DatePicker size="large" />
+                </Form.Item>
+              </Col>
+              <Col span={11}>
+                <Form.Item label="Birth Location" name="birthLocation">
+                  <Input size="large" />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={120}>
+              <Col span={11}>
+                <Form.Item
+                  label="Mobile Number"
+                  name="mobileNumber"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your mobile number",
+                    },
+                    {
+                      validator: (_, value) => {
+                        if (value && !/^[0-9]{9,11}$/.test(value)) {
+                          return Promise.reject("Invalid phone number!");
+                        }
+                        return Promise.resolve();
+                      },
+                    }
+                  ]}
+                >
+                  <Input size="large" />
+                </Form.Item>
+              </Col>
+              <Col span={11}>
+                <Form.Item
+                  label="Job Title"
+                  name="jobTitle"
+                  rules={[
+                    { required: true, message: "Please input your job title" },
+                  ]}
+                >
+                  <Input size="large" />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={120}>
+              <Col span={11}>
+                <Form.Item label="CV" name="cv">
+                  <Upload  {...uploadProps}>
+                    <Button icon={<UploadOutlined />}>Upload CV</Button>
+                  </Upload>
+                </Form.Item>
+              </Col>
+              <Col span={11}>
+                <Form.Item label="Image" name="image">
+                  <Upload {...uploadProps}>
+                    <Button icon={<UploadOutlined />}>Upload Image</Button>
+                  </Upload>
+                </Form.Item>
+              </Col>
+            </Row>{" "}
+            <Row>
+              <Col span={24} style={{ textAlign: "right", marginTop: "20px" }}>
+                <Form.Item {...tailLayout}>
+                  <Button type='primary' htmlType="submit">
+                    Submit
+                  </Button>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </Card>
+      </div>
+    </>
   );
-}
+};
 
-export default page;
+export default MyForm;

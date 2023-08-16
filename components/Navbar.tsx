@@ -1,58 +1,65 @@
-"use client";
-import { useState } from "react";
-import Image from "next/image";
+'use client'
+import React from "react";
+import Image  from "next/image";
 import {
-  MagnifyingGlassIcon,
-  BellIcon,
-  EnvelopeIcon,
-  UserCircleIcon,
-} from "@heroicons/react/24/solid";
+  BellOutlined,
+  MailOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+import { Layout, Input, Button, Menu, Avatar } from "antd";
+import { useAuthContext } from "@/contexts/AuthContext";
+import Link from "next/link";
+import { getPhotoUrl, removeToken } from "@/utils/helper";
+import { BASE_SERVEFR_URL } from "@/utils/constant";
+import { useRouter } from "next/navigation";
 
-import Dropdown from "./Dropdown";
+const { Header } = Layout;
+
 function Navbar() {
-  const [signedIn, setSignedIn] = useState(false);
+  const { user } = useAuthContext();
+  const router = useRouter()
+  const handleLogout = () => {
+    removeToken();
+    router.push("/login");
+  }
+  
   return (
-    <div className="border-b border-gray-800 shadow-md  flex justify-start items-center sticky top-0 bg-white z-10">
+    <Header style={{backgroundColor: '#FFF'}} className="border-b bg-white sticky top-0 z-10 flex">
       {/* Logo */}
       <Image src="/logo.png" alt="logo" height={100} width={100} />
 
-      {/* Search Bar */}
-      <div className="flex border border-gray-600 rounded-2xl items-center justify-center my-auto mx-2 ">
-        <input
-          type="text"
-          placeholder="search jobs"
-          className="mx-4 focus:outline-none text-sm p-2 text-start italic "
-        />
-        <MagnifyingGlassIcon className="h-full w-4 mr-1 text-gray-600" />
-      </div>
+      {/* Menu */}
+      <Menu theme="light" mode="horizontal" defaultSelectedKeys={["1"]} className="space-x-4 ml-4">
+        <Menu.Item key="1">
+          <Link href="/find">Find</Link>
+        </Menu.Item>
+        <Menu.Item key="2">
+          <Link href="/offer">Your Offer</Link>
+        </Menu.Item>
+        <Menu.Item key="3">
+          <Link href="/companies">Companies</Link>
+        </Menu.Item>
+      </Menu>
 
-      {/* DropDowns */}
-      <div className="flex space-x-4 items-center">
-        <Dropdown title="Find" start="Find" />
-        <Dropdown title="Your Offer" start="Offer" />
-        <a href="" className="text-sm  text-gray-600 hover:bg-gray-50">
-          Companies
-        </a>
+      {/* User Actions */}
+      <div className="flex items-center ml-auto mr-4 space-x-4">
+        {user ? (
+          <>
+            <Avatar src={user.user_info.photo ? getPhotoUrl(user.user_info.photo) : BASE_SERVEFR_URL+'/uploads/user_318_159711_35568c738c.avif'} size="large" icon={<UserOutlined />} className="text-gray-600" />
+            <Button onClick={handleLogout} type="default">Logout</Button>
+          </>
+        ) : (
+          <>
+            <Link href="/login">
+              <Button type="default">Login</Button>
+            </Link>
+            <Link href="/signup">
+              <Button type="primary">Sign Up</Button>
+            </Link>
+          </>
+        )}
       </div>
-      {/* Login */}
-
-      {!signedIn ? (
-        <div className=" flex space-x-6 ml-auto mr-2 items-center">
-          <BellIcon className="h-full w-8 mr-1 text-gray-600" />
-          <EnvelopeIcon className="h-full w-6 mr-1 text-gray-600" />
-          <UserCircleIcon className="h-full w-16 mr-1 text-gray-600" />
-        </div>
-      ) : (
-        <div className="space-x-6 ml-auto mr-2">
-          <button className="border border-blue-500 rounded-3xl px-8 py-1 text-blue-500">
-            Login
-          </button>
-          <button className=" bg-blue-500 rounded-3xl px-8 py-1 text-white ">
-            Sign Up
-          </button>
-        </div>
-      )}
-    </div>
+    </Header>
   );
 }
 
