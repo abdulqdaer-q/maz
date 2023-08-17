@@ -13,7 +13,7 @@ const Profile = () => {
   console.log({user});
   
   type intro = {
-    icon: ReactComponentElement<any>;
+    icon: any;
     title: string;
   };
   type profile = {
@@ -31,7 +31,7 @@ const Profile = () => {
     name: user?.user_info.name,
     about:
       "As a BBA accounting and finance graduate with two years of experience as an accountant, I am proficient in using ERP software such as QuickBooks and Oracle. My knowledge and expertise in accounting principles, financial reporting, and data analysis will help me excel in my role as an accountant. I am passionate about providing accurate financial information to support the growth of the company and ensure compliance with regulatory requirements",
-    bio: user?.user_info.bio || '',
+    bio: user?.user_info.bio || 'bio',
     intro: [
       {
         title: "Syria",
@@ -76,6 +76,14 @@ const Profile = () => {
           </svg>
         ),
       },
+      {
+      title: user?.email,
+      icon: "",
+    },
+    {
+      title: user?.user_info.birthDate,
+      icon: "",
+    },
     
     ],
   };

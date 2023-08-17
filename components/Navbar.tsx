@@ -29,15 +29,16 @@ function Navbar() {
       <Image src="/logo.png" alt="logo" height={100} width={100} />
 
       {/* Menu */}
-      <Menu theme="light" mode="horizontal" defaultSelectedKeys={["1"]} className="space-x-4 ml-4">
+      <Menu theme="light" mode="horizontal" className="space-x-4 ml-4">
         <Menu.Item key="1">
-          <Link href="/find">Find</Link>
+          
+          <Link href="/main">All Jobs </Link>
         </Menu.Item>
         <Menu.Item key="2">
-          <Link href="/offer">Your Offer</Link>
+          <Link href="/postjob">Post Job</Link>
         </Menu.Item>
         <Menu.Item key="3">
-          <Link href="/companies">Companies</Link>
+          <Link href="/createcompany">Create Company</Link>
         </Menu.Item>
       </Menu>
 

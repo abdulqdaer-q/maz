@@ -7,14 +7,20 @@ import Filter from "@/components/Filter";
 import JobCard from "@/components/JobCard";
 import React, { useEffect, useState } from 'react'
 import { axios } from '../../utils/axios'
+import { useRouter } from "next/router";
 
 const Page = () => {
+  //  const router = useRouter();
+	const  category = "it";
+	const  title = "soft";
+
+
     const [jobs, setjobs] = useState();
 
     useEffect(() => {
         const fetchDataAsync = async () => {
           try {
-            const response = await axios("/jobs?populate=company,company.companyLogo,job");
+            const response = await axios(`/jobs?populate=company,company.companyLogo,category,job&filter[job][jobTitle][$contains]=${title}&fields[0]=company&filters[category][category][$eq]=${category}`);
             setjobs(response.data.data);
           
           } catch (error) {
@@ -37,7 +43,7 @@ const Page = () => {
             create a profile and apply for new job opportunities find
             professionals that best match your job requirements
           </p>
-          <SearchBar />
+        
         </div>
         <div className=" lg:w-[40%]">
           <Image
@@ -51,7 +57,7 @@ const Page = () => {
       </div>
       <div className=" pt-5 px-5 md:grid md:grid-cols-4 gap-10 flex flex-col">
         <div className="col-span-1">
-          <Filter />
+         
         </div>
         <div className="col-span-3 grid grid-cols-1 gap-y-5 mx-0 mt-12 ">
           {jobs?.map((job) => (
