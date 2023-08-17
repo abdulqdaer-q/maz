@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 const { Header } = Layout;
 
 function Navbar() {
-  const { user } = useAuthContext();
+  const { user, isLoading } = useAuthContext();
   const router = useRouter()
   const handleLogout = () => {
     removeToken();
@@ -43,9 +43,10 @@ function Navbar() {
 
       {/* User Actions */}
       <div className="flex items-center ml-auto mr-4 space-x-4">
-        {user ? (
+        {(user && !isLoading) ? (
           <>
-            <Avatar src={user.user_info.photo ? getPhotoUrl(user.user_info.photo) : BASE_SERVEFR_URL+'/uploads/user_318_159711_35568c738c.avif'} size="large" icon={<UserOutlined />} className="text-gray-600" />
+            <Link href='/profile'>
+              <Avatar src={user?.user_info.photo ? getPhotoUrl(user.user_info.photo) : BASE_SERVEFR_URL+'/uploads/user_318_159711_35568c738c.avif'} size="large" icon={<UserOutlined />} className="text-gray-600" /></Link>
             <Button onClick={handleLogout} type="default">Logout</Button>
           </>
         ) : (

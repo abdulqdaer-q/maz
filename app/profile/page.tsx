@@ -5,28 +5,36 @@ import Photo from "../../assets/maz.jpg";
 import Image, { StaticImageData } from "next/image";
 import FileUploader from "@/components/FileUploader";
 import PdfUploader from "@/components/FileUploader";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { getPhotoUrl } from "@/utils/helper";
 
 const Profile = () => {
+  const {user} = useAuthContext()
+  console.log({user});
+  
   type intro = {
     icon: ReactComponentElement<any>;
     title: string;
   };
   type profile = {
-    photo: StaticImageData;
+    photo: string;
     name: string;
     bio: string;
     about: string;
     intro: intro[];
   };
+  if (!user){ 
+    return <h1>Loading</h1>
+  }
   const profileInfo: profile = {
-    photo: Photo,
-    name: "mohammad mazketly",
+    photo: getPhotoUrl(user?.user_info.photo),
+    name: user?.user_info.name,
     about:
       "As a BBA accounting and finance graduate with two years of experience as an accountant, I am proficient in using ERP software such as QuickBooks and Oracle. My knowledge and expertise in accounting principles, financial reporting, and data analysis will help me excel in my role as an accountant. I am passionate about providing accurate financial information to support the growth of the company and ensure compliance with regulatory requirements",
-    bio: "BBA (Accounting) Graduate with 2 Years of Accounting Experience and ERP Software Proficiency",
+    bio: user?.user_info.bio || '',
     intro: [
       {
-        title: "syria",
+        title: "Syria",
         icon: (
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +58,7 @@ const Profile = () => {
         ),
       },
       {
-        title: "(316) 555-0116",
+        title: user?.user_info.phoneNumber,
         icon: (
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -68,25 +76,7 @@ const Profile = () => {
           </svg>
         ),
       },
-      {
-        title: "Studied Erp, oracle financial 'accounting at Teach lead it",
-        icon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"
-            />
-          </svg>
-        ),
-      },
+    
     ],
   };
   const [uploadedFile, setUploadedFile] = useState<File | undefined>(undefined);
@@ -103,7 +93,7 @@ const Profile = () => {
             width={700}
             height={700}
             alt="profile"
-            src={profileInfo.photo.src}
+            src={profileInfo.photo}
             className="rounded-full w-60 h-60 -mt-16"
           />
         </div>

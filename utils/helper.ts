@@ -24,6 +24,5 @@ export type StrapiPhoto = {
     url: string
 }
 export const getPhotoUrl = (photo:StrapiPhoto ) => {
-    
-    return BASE_SERVEFR_URL + photo.url
+    return BASE_SERVEFR_URL + photo?.url
 }

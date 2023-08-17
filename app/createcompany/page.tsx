@@ -1,6 +1,115 @@
+"use client";
 import Navbar from "@/components/Navbar";
-import CostumFileInput from "@/components/CostumFileInput";
+import {
+  Form,
+  Input,
+  Select,
+  Button,
+  Upload,
+  Row,
+  Col,
+  UploadProps,
+  message,
+  Modal,
+} from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import { axios } from "@/utils/axios";
+import { RcFile, UploadChangeParam, UploadFile } from "antd/es/upload";
+import { useEffect, useState } from "react";
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+
 function page() {
+  const onFinish = (values: any) => {
+    const data = {
+      company: ''
+    }
+  };
+  const [countries, setCountries] = useState([]);
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    const fetchAll =  async () => {
+      const {data: {data}} = await axios.get('/countries');
+      setCountries(data.map((e:any) =>({
+        value: e.id,
+        label: e.attributes.name
+      })))
+      const {data: {data: categories}} = await axios.get('/categories');
+      setCategories(categories.map((e:any) =>({
+        value: e.id,
+        label: e.attributes.category
+      })))
+    }
+    fetchAll();
+  }, []);
+  const getBase64 = (file: RcFile): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
+  const handleCancel = () => setPreviewOpen(false);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  const handlePreview = async (file: UploadFile) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj as RcFile);
+    }
+
+    setPreviewImage(file.url || (file.preview as string));
+    setPreviewOpen(true);
+  };
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
+
+  const beforeUpload = (file: RcFile) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      message.error('You can only upload JPG/PNG file!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error('Image must smaller than 2MB!');
+    }
+    return isJpgOrPng && isLt2M;
+  };
+  const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
+  setFileList(newFileList);
+
+  const uploadProps: UploadProps = {
+    
+    customRequest: (options) => {
+      const fd = new FormData();
+      fd.append("files", options.file);
+      axios
+        .post("/upload", fd)
+        .then((e) => {
+          options!.onSuccess!(e.data);
+        })
+        .catch((err) => {
+          options.onError!({
+            status: 400,
+            name: "error",
+            method: "POST",
+            url: "/upload",
+            message: "upload failed",
+          });
+        });
+    },
+    onChange(info) {
+      handleChange(info);
+    },
+    beforeUpload(file) {
+      beforeUpload(file)
+    }
+  };
   return (
     <div className="bg-gray-200 pb-6">
       <Navbar />
@@ -11,58 +120,119 @@ function page() {
         <h1 className="text-lg text-gray-700 text-center  mt-2 mb-12">
           Let&apos;s Get Started With A Few Details About Your Buisness
         </h1>
-        <form action="">
-          <div className="grid grid-cols-5">
-            <div className="col-span-1">
-              <label className="flex w-full my-5 justify-center font-semibold">
-                Company Information
-              </label>
-              <label className="flex w-full mb-5 justify-center mt-32 font-semibold">
-                Location
-              </label>
-              <label className="flex w-full my-5 justify-center mt-8 font-semibold">
-                Company Logo
-              </label>
-              <label className="flex w-full mt-32 justify-center font-semibold">
-                Company Website
-              </label>
-              <label className="flex w-full mt-12 justify-center font-semibold">
-                Company Tagline
-              </label>
-            </div>
-            <div className="col-span-3 col-start-2">
-              <input
-                type="text"
-                className="h-10 rounded-md border border-gray-400 ml-6 w-full my-4"
-              />
-              <select className="h-10 rounded-md border border-gray-400 ml-6 w-full my-4 text-gray-400">
-                <option value="" disabled selected hidden className="">
-                  Select Industry
-                </option>
-              </select>
-              <select className="h-10 rounded-md border border-gray-400 ml-6 w-3/4 my-4 "></select>
-              <CostumFileInput
-                first="p-4 h-36 w-1/4 flex flex-col items-center gap-2 bg-blue-100 text-blue-400 rounded-full cursor-pointer border border-dashed mx-4 border-gray-400"
-                second="p-4 mt-4 bg-blue-100 overflow-hidden text-ellipsis "
-              />
-              <input
-                placeholder="Example www.Company.com"
-                type="text"
-                className="h-10 rounded-md border border-gray-400 ml-6 w-full my-4 pl-4"
-              />
-              <input
-                placeholder="Example: One Of The World's Largest"
-                type="text"
-                className="h-20 rounded-md border border-gray-400 ml-6 w-full my-4 pl-4"
-              />
-            </div>
-            <div className="col-span-1 col-start-5 row-end-4 pr-6">
-              <button className="w-full bg-blue-600 h-12 mb-20 text-white text-sm col-span-2 col-start-2 rounded-lg mt-6">
-                Create Company Page
-              </button>
-            </div>
-          </div>
-        </form>
+        <Form layout="vertical" onFinish={onFinish}>
+          <Row gutter={[16, 16]}>
+            <Col span={12}>
+              <Form.Item
+                name="companyName"
+                label="Company Name"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter the company name",
+                  },
+                ]}
+              >
+                <Input placeholder="Company Name" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="category"
+                label="Industry"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the industry",
+                  },
+                ]}
+              >
+                <Select placeholder="Select Industry" options={categories}>
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="company_locateds"
+                label="Location"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the location",
+                  },
+                ]}
+              >
+                <Select placeholder="Select Location" options={countries}>
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="Company Logo"
+                name="companyLogo"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please upload the company logo",
+                  },
+                ]}
+              >
+                <Upload customRequest={uploadProps.customRequest}
+                 name="logo" maxCount={1} multiple={false}               className="avatar-uploader"
+                 onPreview={handlePreview}
+                 onChange={handleChange}         
+                 listType="picture-circle"
+
+        showUploadList={true}>
+        { uploadButton}
+                
+                </Upload>
+                <Modal open={previewOpen} title={null} footer={null} onCancel={handleCancel}>
+        <img alt="example" style={{ width: '100%' }} src={previewImage} />
+      </Modal>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="companyWebsite"
+                label="Company Website"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter the company website",
+                  },
+                ]}
+              >
+                <Input placeholder="Company Website" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="tagline"
+                label="Company Tagline"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter the company tagline",
+                  },
+                ]}
+              >
+                <Input.TextArea placeholder="Company Tagline" />
+              </Form.Item>
+            </Col>
+            <Col span={4}>
+              <Form.Item>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="w-full h-12 mb-20 text-white text-sm rounded-lg mt-6"
+                >
+                  Create Company Page
+                </Button>
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
       </main>
     </div>
   );

@@ -12,10 +12,12 @@ export interface UserInfo {
   sex: string;
   updatedAt: string;
   photo: StrapiPhoto
+  bio: string;
 }
 
 export interface User {
   blocked: boolean;
+  username: string;
   confirmed: boolean;
   createdAt: string;
   email: string;
