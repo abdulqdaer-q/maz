@@ -7,20 +7,22 @@ import Filter from "@/components/Filter";
 import JobCard from "@/components/JobCard";
 import React, { useEffect, useState } from 'react'
 import { axios } from '../../utils/axios'
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+import { useSearchContext } from "@/contexts/SearchContext";
+
+
+
 
 const Page = () => {
-  //  const router = useRouter();
-	const  category = "it";
-	const  title = "soft";
-
+  const {jjobs} = useSearchContext()
+console.log({jjobs})
 
     const [jobs, setjobs] = useState();
 
     useEffect(() => {
         const fetchDataAsync = async () => {
           try {
-            const response = await axios(`/jobs?populate=company,company.companyLogo,category,job&filter[job][jobTitle][$contains]=${title}&fields[0]=company&filters[category][category][$eq]=${category}`);
+            const response = await axios(`/jobs?populate=company,company.companyLogo,category,job&filter[job][jobTitle][$contains]=ds&fields[0]=company&filters[category][category][$eq]=it`);
             setjobs(response.data.data);
           
           } catch (error) {
