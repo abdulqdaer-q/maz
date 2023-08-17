@@ -4,28 +4,36 @@ import CostumFileInput from "@/components/CostumFileInput";
 import Input from "@/components/Input";
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import Select from "@/components/Select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RadioGroup from "@/components/RadioGroup";
 import TextArea from "@/components/TextArea";
 import ImageUploader from "@/components/ImageUploader";
+import { axios } from "@/utils/axios";
+import { message } from "antd";
 function Index() {
 	const [kind, setKind] = useState<string>('job');
- 
+  const [Categoryoptions, setCategories] = useState([]);
+  useEffect(() => {
+    const fetchall =async() => {
+      const {data:{data}} = await axios.get('/categories');
+      setCategories(data.map((e:any) =>({
+        value: e.id,
+        label: e.attributes.category
+      })))
+    }
+    fetchall();
+  },[]);
   const Locationsoptions = [
     { value: 'remote', label: 'Remote' },
     { value: 'nonremote', label: 'Non Remote' },
    
   ];
   const Typesoptions = [
-    { value: 'fulltime', label: 'Full time' },
-    { value: 'parttime', label: 'Part time' },
+    { value: 'contract', label: 'Full time' },
+    { value: 'Freelance', label: 'Part time' },
    
   ];
-  const Categoryoptions = [
-    { value: 'bla1', label: 'Development' },
-    { value: 'bla2', label: 'Freelance' },
-   
-  ];
+ 
   const kindoptions = [
     { value: 'service', label: 'Service' },
     { value: 'job', label: 'Job' },
@@ -40,9 +48,22 @@ function Index() {
 		watch,
 	} = useForm<any>();
 	
-	const onSubmit: SubmitHandler<any> =  (data) => {
-		console.log(data)
-		console.log(errors)
+	const onSubmit: SubmitHandler<any> = async (x) => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear(); // Get the current year (e.g., 2023)
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Get the current month (0-indexed)
+    const day = String(currentDate.getDate()).padStart(2, '0'); // Get the current day
+    
+    const formattedDate = `${year}-${month}-${day}`;		const data = {
+      salary: x.Salary,
+      job: x.jobTitle,
+      category: x.Category,
+      type: x.JobType,
+      description: x.jobDescription ,
+      publishDate: formattedDate
+    };
+    await axios.post('/jobs', {data})
+    message.success('posted job successfully');
 	};
   return (
 	<div className="bg-gray-200 pb-6">

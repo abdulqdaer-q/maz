@@ -6,7 +6,7 @@ import findjop from "../../assets/findJob2.png";
 import Filter from "@/components/Filter";
 import JobCard from "@/components/JobCard";
 import React, { useEffect, useState } from 'react'
-import { axios } from '../../utils/axios'
+import { axios } from "@/utils/axios";
 
 const Page = () => {
     const [jobs, setjobs] = useState();
