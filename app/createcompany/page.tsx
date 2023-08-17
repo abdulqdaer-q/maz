@@ -17,11 +17,28 @@ import { axios } from "@/utils/axios";
 import { RcFile, UploadChangeParam, UploadFile } from "antd/es/upload";
 import { useEffect, useState } from "react";
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { useRouter } from "next/navigation";
 
 function page() {
-  const onFinish = (values: any) => {
+const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const router = useRouter();
+  const onFinish = async(values: any) => {
+    
+    
     const data = {
-      company: ''
+      name: values.companyName,
+      categories: values.categories,
+      company_locateds: values.company_locateds,
+      companyLogo: fileList.map((e) => {
+        return e.response[0].id
+      }),
+    }
+    try {
+      await axios.post('/companies', {data})
+      message.success('company created');
+      router.push('/');
+    }catch(err){
+      message.error('Failed to create Company');
     }
   };
   const [countries, setCountries] = useState([]);
@@ -51,7 +68,6 @@ function page() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const handleCancel = () => setPreviewOpen(false);
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const handlePreview = async (file: UploadFile) => {
     if (!file.url && !file.preview) {
@@ -138,7 +154,7 @@ function page() {
             </Col>
             <Col span={12}>
               <Form.Item
-                name="category"
+                name="categories"
                 label="Industry"
                 rules={[
                   {
@@ -147,8 +163,7 @@ function page() {
                   },
                 ]}
               >
-                <Select placeholder="Select Industry" options={categories}>
-                </Select>
+                <Select placeholder="Select Industry" options={categories} mode='multiple' />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -162,7 +177,7 @@ function page() {
                   },
                 ]}
               >
-                <Select placeholder="Select Location" options={countries}>
+                <Select placeholder="Select Location" mode='multiple' options={countries}>
                 </Select>
               </Form.Item>
             </Col>
@@ -171,10 +186,7 @@ function page() {
                 label="Company Logo"
                 name="companyLogo"
                 rules={[
-                  {
-                    required: true,
-                    message: "Please upload the company logo",
-                  },
+                  
                 ]}
               >
                 <Upload customRequest={uploadProps.customRequest}
