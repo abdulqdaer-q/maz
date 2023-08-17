@@ -1,3 +1,4 @@
+import ChatRoom from "@/components/ChatRoom";
 import Navbar from "@/components/Navbar";
 import PromotionFeed from "@/components/PromotionFeed";
 
