@@ -1,4 +1,4 @@
-export const BASE_SERVEFR_URL = "https://fa67-188-133-56-121.ngrok-free.app";
+export const BASE_SERVEFR_URL = "http://192.168.59.103:1337";
 export const API = BASE_SERVEFR_URL + "/api";
 export const AUTH_TOKEN = "authToken";
 export const BEARER = "Bearer";

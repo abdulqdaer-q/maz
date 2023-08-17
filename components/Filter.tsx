@@ -1,7 +1,15 @@
-'use client'
-import React from 'react'
+
+import { axios } from '@/utils/axios';
+import router from 'next/router';
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import dynamic from 'next/dynamic';
+
+
+
 const Filter = () => {
+   
+    //http://192.168.59.103:1337/api/jobs?populate=company,company.companyLogo,category&filter[job][jobTitle][$contains]=bal&fields[0]=company&filters[category][category][$eq]=it
     const form=useForm();
     const {register,handleSubmit}= form
     const categories=['Web,IT & Mobile' ,'medical & healthcare','medical & healthcare','design & creative','legal & finance' ]
@@ -16,6 +24,10 @@ const Filter = () => {
 
    }
     const onSubmit=(data:FormType)=>{
+        const searchUrl = `/search?category=${
+			data.categorie}
+		&title=${data.jobType}`;
+		router.push(searchUrl);
         console.log(data)
     }
   return (
@@ -26,7 +38,7 @@ const Filter = () => {
             <ul className='pt-2' >
                 {categories.map((e)=>{
                     return(
-                    <li className=' py-2 text-sm lg:text-base pl-7'>
+                    <li key={e} className=' py-2 text-sm lg:text-base pl-7'>
                         <input type='radio' value={e} {...register("categorie")}/>
                         <label  htmlFor="">{e}</label>
                     </li>
@@ -39,7 +51,7 @@ const Filter = () => {
             <ul className='pt-2'>
             {jobtype.map((e)=>{
                 return(
-                    <li className='pl-7 text-sm lg:text-base py-2'>
+                    <li key={e}  className='pl-7 text-sm lg:text-base py-2'>
                         <input type='radio' value={e} {...register("jobType")}/>
                         <label htmlFor="">{e}</label>
                     </li>
