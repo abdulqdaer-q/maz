@@ -6,7 +6,7 @@ import Sidebar from "./ChatRoomSideBar";
 import Birawi from "../assets/birawi.jpg";
 import Khair from "../assets/khair.jpg";
 
-const socket = io("http://localhost:3000");
+const socket = io("http://localhost:3001");
 
 // Change URL as needed
 
@@ -31,7 +31,7 @@ const ChatRoom: React.FC = () => {
 
   useEffect(() => {
     socket.on(
-      "chat message",
+      "chat-message-t",
       ({ chat, message }: { chat: string; message: string }) => {
         setChatMessages((prevChatMessages) => ({
           ...prevChatMessages,
@@ -47,7 +47,9 @@ const ChatRoom: React.FC = () => {
   const handleSendMessage = () => {
     if (!activeChat) return;
 
-    socket.emit("chat message", { chat: activeChat, message: inputMessage });
+    socket.emit("chat-message", { chat: activeChat, message: inputMessage });
+    console.log('s');
+    
     setChatMessages((prevChatMessages) => ({
       ...prevChatMessages,
       [activeChat]: [

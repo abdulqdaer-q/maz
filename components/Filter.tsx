@@ -5,13 +5,13 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
-import { useSearchContext } from '@/contexts/SearchContext';
 
 
 
 const Filter = () => {
     const router= useRouter()
-    const {setSearch} = useSearchContext();
+    //const {setSearch} = useSearchContext();
+    const setSearch =() => {}
     //http://192.168.59.103:1337/api/jobs?populate=company,company.companyLogo,category&filter[job][jobTitle][$contains]=bal&fields[0]=company&filters[category][category][$eq]=it
     const form=useForm();
     const {register,handleSubmit}= form

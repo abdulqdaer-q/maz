@@ -7,6 +7,7 @@ import Filter from "@/components/Filter";
 import JobCard from "@/components/JobCard";
 import React, { useEffect, useState } from 'react'
 import { axios } from "@/utils/axios";
+import {BASE_SERVEFR_URL} from '../../utils/constant';
 
 const Page = () => {
     const [jobs, setjobs] = useState();
@@ -16,6 +17,8 @@ const Page = () => {
           try {
             const response = await axios("/jobs?populate=company,company.companyLogo,job");
             setjobs(response.data.data);
+            console.log(response.data.data[0].attributes.company?.data?.attributes.companyLogo?.data);
+            
           
           } catch (error) {
             
@@ -54,13 +57,13 @@ const Page = () => {
           <Filter />
         </div>
         <div className="col-span-3 grid grid-cols-1 gap-y-5 mx-0 mt-12 ">
-          {jobs?.map((job) => (
+          {jobs && jobs.map((job) => (
             <JobCard
               key={job.id}
               id={job.id}
-              title={job.attributes.job.data.attributes.jobTitle}
-              image={job.attributes.company?.data.attributes.companyLogo?.data?.[0].attributes.url}
-              name={job.attributes.company?.data.attributes.name}
+              title={job.attributes.job?.data?.attributes.jobTitle}
+              image={BASE_SERVEFR_URL + job.attributes.company?.data?.attributes.companyLogo?.data[0].attributes.url}
+              name={job.attributes.company?.data?.attributes.name}
               isCompany={job.isCompany}
               salary={job.attributes.salary}
               time={job.attributes.type}

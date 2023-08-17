@@ -3,14 +3,19 @@ const http = require("http");
 const socketIo = require("socket.io");
 
 const app = express();
+
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, { cors: {
+  origin: "*",
+  methods: ["GET", "POST"]
+}});
 
 io.on("connection", (socket) => {
   console.log("a user connected");
 
-  socket.on("chat message", (message) => {
-    io.emit("chat message", message);
+  socket.on("chat-message", (message) => {
+    io.emit("chat-message", message);
+    console.log({message});
   });
 
   socket.on("disconnect", () => {
