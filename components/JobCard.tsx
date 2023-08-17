@@ -1,3 +1,4 @@
+import { BASE_SERVEFR_URL } from "@/utils/constant";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Link from "next/link";
@@ -29,11 +30,11 @@ function JobCard({
         <h1 className="font-semibold text-xl">{title}</h1>
 
         <div className="flex items-center mb-4">
-          <Image src={image} alt="company logo" width={70} height={70} />
+          <Image src={BASE_SERVEFR_URL+image} alt="company logo" width={70} height={70} />
           <p className="text-lg">{name}</p>
-          {isCompany && (
+          
             <CheckCircleIcon className="w-6 h-6 ml-3 text-blue-400" />
-          )}
+          
         </div>
 
         <p className="mb-2">{salary}</p>
