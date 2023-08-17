@@ -1,11 +1,12 @@
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import React from "react";
+import { BASE_SERVEFR_URL } from "@/utils/constant";
 type propsType = {
   id: number;
   jobTitle: string;
   companyImg: StaticImageData | string;
-  publisherImg: StaticImageData | string;
+  companyName:string
   publisherName: string;
   salary: number;
 };
@@ -14,7 +15,7 @@ const OfferCard = ({
   id,
   jobTitle,
   companyImg,
-  publisherImg,
+  companyName,
   publisherName,
   salary,
 }: propsType) => {
@@ -26,7 +27,7 @@ const OfferCard = ({
             width={500}
             height={500}
             className="rounded-t-lg h-28 object-cover w-full "
-            src={companyImg}
+            src={BASE_SERVEFR_URL+companyImg}
             alt=""
           />
         </a>
@@ -37,13 +38,7 @@ const OfferCard = ({
             </h5>
           </a>
           <div className=" pb-4  flex flex-row gap-3 items-end">
-            <Image
-              src={publisherImg}
-              width={40}
-              height={40}
-              className="rounded-full"
-              alt="profilePic.png"
-            />
+            <p  className="text-[14px] ">{companyName}</p>
             <p className="text-[14px] ">{publisherName}</p>
           </div>
 
