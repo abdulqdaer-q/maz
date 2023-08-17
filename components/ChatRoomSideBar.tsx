@@ -24,7 +24,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         {chats.map((chat) => (
           <li
             key={chat.name}
-            className={`py-2 mt-5 cursor-pointer ${
+            className={` mt-5 cursor-pointer ${
               activeChat === chat.name ? "bg-blue-200 rounded-md" : ""
             }`}
             onClick={() => onChatSelect(chat.name, chat.image)}

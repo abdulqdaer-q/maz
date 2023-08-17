@@ -63,7 +63,7 @@ const ChatRoom: React.FC = () => {
   };
 
   return (
-    <div className="flex w-full ">
+    <div className="flex h-full w-full ">
       <Sidebar
         chats={[
           { name: "Birawi", image: Birawi.src },
@@ -75,7 +75,7 @@ const ChatRoom: React.FC = () => {
           handleChatSelect(chatName, chatImage)
         }
       />
-      <div className="w-3/4 h-screen border-l p-4">
+      <div className="w-3/4  border-l p-4">
         {selectedChat && (
           <div className=" flex gap-3">
             <img
@@ -86,7 +86,7 @@ const ChatRoom: React.FC = () => {
             <h2 className="text-lg mt-2 font-semibold">{selectedChat.name}</h2>
           </div>
         )}
-        <div className="h-full overflow-y-auto">
+        <div className=" h-[790px] overflow-y-auto">
           {chatMessages[activeChat || ""]?.map(
             (messageObj: any, index: any) => (
               <Message
