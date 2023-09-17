@@ -1,4 +1,4 @@
-export enum employmentType {
+export enum EmploymentType {
   FULL_TIME = "Full Time",
   PARt_TIME = "Part Time",
   CONCTRACTOR = "Contractor",
