@@ -6,13 +6,17 @@ import Title from "antd/es/typography/Title";
 import Link from "next/link";
 import { PropsWithChildren } from "react";
 
-type Props = PropsWithChildren & {
+export type FillInformationProps = PropsWithChildren & {
   onSubmit: (data: any) => void;
   title: string;
   subTitle?: string;
   startOver?: boolean;
   initialValues?: Store;
   form?: FormInstance;
+  hideSkip?: boolean;
+  startOverHref?: string;
+  startOverText?: string;
+  submitText?: string;
 };
 const FillInformationWrapper = ({
   onSubmit,
@@ -22,7 +26,11 @@ const FillInformationWrapper = ({
   children,
   initialValues,
   form,
-}: Props) => {
+  hideSkip,
+  startOverHref = "/profile/complete-profile/personal-information",
+  startOverText = "Start Over",
+  submitText = "Next",
+}: FillInformationProps) => {
   return (
     <>
       <div className="bg-white mt-3 text-center">
@@ -41,22 +49,24 @@ const FillInformationWrapper = ({
             <div className="flex justify-between  items-center">
               <div className="">
                 {startOver && (
-                  <Link href="/profile/complete-profile/personal-information">
-                    <Button type="text">Start Over</Button>
+                  <Link href={startOverHref}>
+                    <Button type="text">{startOverText}</Button>
                   </Link>
                 )}
               </div>
               <div className="flex">
-                <Link href="/profile">
-                  <Button type="text">I'll do later</Button>
-                </Link>
+                {!hideSkip && (
+                  <Link href="/profile">
+                    <Button type="text">I'll do later</Button>
+                  </Link>
+                )}
                 <Button
                   htmlType="submit"
                   type="primary"
                   size="middle"
                   className="!px-10 "
                 >
-                  Next
+                  {submitText}
                 </Button>
               </div>
             </div>

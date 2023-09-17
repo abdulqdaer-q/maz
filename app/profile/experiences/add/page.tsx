@@ -8,14 +8,16 @@ export default () => {
   const router = useRouter();
 
   const handleAfterSubmit = () => {
-    router.replace("/profile/complete-profile/education");
+    router.replace("/profile");
   };
   if (isLoading) return <h1>Loading...</h1>;
   return (
     <ExperienceForm
       onAfterSubmit={handleAfterSubmit}
       user={user!}
-      id={user?.userInfo?.experiences?.[0].id}
+      startOverText="Cancel"
+      startOverHref="/profile"
+      submitText="Save"
     />
   );
 };

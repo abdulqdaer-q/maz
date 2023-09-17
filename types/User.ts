@@ -34,6 +34,7 @@ export interface UserInfo {
   nationality: Nationality;
   educations?: Education[];
   experiences?: Experience[];
+  cv?: Photo;
 }
 
 export interface Company {}

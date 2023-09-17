@@ -15,7 +15,7 @@ const AuthProvider = ({ children }: Props) => {
   const [userData, setUserData] = useState<User>();
   const [isLoading, setIsLoading] = useState(true);
   const [isCompany, setIsCompany] = useState(false);
-
+  const [forceReload, setForceReload] = useState(false);
   const authToken = getToken();
 
   const fetchLoggedInUser = async (token: string) => {
@@ -25,7 +25,7 @@ const AuthProvider = ({ children }: Props) => {
       });
       const { id } = data;
       const { data: realUser } = await axios.get<User>(
-        `/users/${id}?populate=userInfo,userInfo.photo,company,userInfo.residenceCountry,userInfo.nationality,userInfo.educations,userInfo.experiences`
+        `/users/${id}?populate=userInfo,userInfo.photo,company,userInfo.residenceCountry,userInfo.nationality,userInfo.educations,userInfo.experiences,userInfo.cv,userInfo.experiences.companyIndustry,userInfo.experiences.jobLocation,userInfo.educations.country`
       );
       setIsCompany(!!realUser.company);
 
@@ -47,11 +47,17 @@ const AuthProvider = ({ children }: Props) => {
       return;
     }
     setIsLoading(false);
-  }, [authToken]);
+  }, [authToken, forceReload]);
 
   return (
     <AuthContext.Provider
-      value={{ user: userData, setUser: handleUser, isLoading, isCompany }}
+      value={{
+        user: userData,
+        setUser: handleUser,
+        isLoading,
+        isCompany,
+        setForceReload,
+      }}
     >
       {children}
     </AuthContext.Provider>

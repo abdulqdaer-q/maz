@@ -1,9 +1,13 @@
+import { Country } from "./Country";
+
 export interface Education {
   degree: Degree;
   description?: string;
   feildOfStudy: string;
   garde?: number;
   graduationDate: string;
+  university: string;
+  country?: Country;
   id: number;
 }
 

@@ -1,16 +1,17 @@
 "use client";
 import EducationForm from "@/components/froms/EducationForm";
-import { useAuthContext } from "@/contexts/AuthContext";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 export default () => {
   const router = useRouter();
-  const { user, isLoading } = useAuthContext();
-  if (isLoading) return <></>;
-
+  const params = useParams();
   return (
     <EducationForm
-      id={user?.userInfo?.educations?.[0].id}
+      startOverText="Cancel"
+      startOverHref="/profile"
+      submitText="Save"
+      hideSkip
+      id={+params.id}
       onAfterSubmit={() => {
         router.replace("/profile");
       }}
