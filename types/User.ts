@@ -1,28 +1,50 @@
-import { StrapiPhoto } from "@/utils/helper";
+import { Country } from "./Country";
+import { Education } from "./Education";
+import { Experience } from "./Experience";
 
-export interface UserInfo {
-  birthDate: string;
-  createdAt: string;
+export interface Photo {
   id: number;
-  locale: string;
   name: string;
-  nationalID: string;
-  phoneNumber: string;
-  publishedAt: string;
-  sex: string;
-  updatedAt: string;
-  photo: StrapiPhoto
-  bio: string;
+  alternativeText: string | null;
+  caption: string | null;
+  width: number;
+  height: number;
+  url: string;
+  previewUrl: string | null;
+  provider: string;
 }
 
-export interface User {
-  blocked: boolean;
-  username: string;
-  confirmed: boolean;
-  createdAt: string;
-  email: string;
+export enum Gender {
+  MALE = "Male",
+  FEMALE = "Female",
+}
+
+export interface Nationality extends Country {}
+export interface ResidenceCountry extends Country {}
+
+export interface UserInfo {
   id: number;
+  firstName: string;
+  lastName: string;
+  mobilePhone: string;
+  birthday: string;
+  gender: Gender;
+  photo: Photo;
+  residenceCountry: ResidenceCountry;
+  nationality: Nationality;
+  educations?: Education[];
+  experiences?: Experience[];
+}
+
+export interface Company {}
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
   provider: string;
-  updatedAt: string;
-  user_info: UserInfo;
+  confirmed: boolean;
+  blocked: boolean;
+  userInfo?: UserInfo;
+  company?: Company;
 }

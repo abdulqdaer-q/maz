@@ -1,18 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    experimental: {
-        serverActions: true,
+  experimental: {
+    serverActions: true,
+  },
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "**",
       },
-    
-      images: {
-        remotePatterns: [
-          {
-            protocol: "https",
-            hostname: "**",
-          },
-        ],
-      }
-}
+    ],
+  },
+};
 
-
-module.exports = nextConfig
+module.exports = nextConfig;

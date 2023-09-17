@@ -1,173 +1,253 @@
 "use client";
-import Navbar from "@/components/Navbar";
-import React, { ReactComponentElement, useState } from "react";
-import Photo from "../../assets/maz.jpg";
-import Image, { StaticImageData } from "next/image";
-import FileUploader from "@/components/FileUploader";
-import PdfUploader from "@/components/FileUploader";
+import SearchJobBar from "@/components/SearchJobBar";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { getPhotoUrl } from "@/utils/helper";
+import { getPhotoLink } from "@/lib/getPhotoLink";
+import { Degree } from "@/types/Education";
+import { Card, Col, Row, Image } from "antd";
+import Title from "antd/es/typography/Title";
+import { useRouter } from "next/navigation";
+import {
+  Fragment,
+  PropsWithChildren,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+import differenceInMilliseconds from "date-fns/differenceInMilliseconds";
+import { format, formatDuration, intervalToDuration } from "date-fns";
+import Link from "next/link";
+import { User } from "@/types/User";
+
+const Container = ({ children }: PropsWithChildren) => (
+  <div className="w-1/2 pt-5 mx-auto">{children}</div>
+);
 
 const Profile = () => {
-  const {user} = useAuthContext()
-  console.log({user});
-  
-  type intro = {
-    icon: any;
-    title: string;
-  };
-  type profile = {
-    photo: string;
-    name: string;
-    bio: string;
-    about: string;
-    intro: intro[];
-  };
-  if (!user){ 
-    return <h1>Loading</h1>
-  }
-  const profileInfo: profile = {
-    photo: getPhotoUrl(user?.user_info.photo),
-    name: user?.user_info.name,
-    about:
-      "As a BBA accounting and finance graduate with two years of experience as an accountant, I am proficient in using ERP software such as QuickBooks and Oracle. My knowledge and expertise in accounting principles, financial reporting, and data analysis will help me excel in my role as an accountant. I am passionate about providing accurate financial information to support the growth of the company and ensure compliance with regulatory requirements",
-    bio: user?.user_info.bio || 'bio',
-    intro: [
-      {
-        title: "Syria",
-        icon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
-            />
-          </svg>
-        ),
-      },
-      {
-        title: user?.user_info.phoneNumber,
-        icon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"
-            />
-          </svg>
-        ),
-      },
-      {
-      title: user?.email,
-      icon: "",
-    },
-    {
-      title: user?.user_info.birthDate,
-      icon: "",
-    },
-    
-    ],
-  };
-  const [uploadedFile, setUploadedFile] = useState<File | undefined>(undefined);
+  const { user, isCompany } = useAuthContext();
+  const router = useRouter();
+  const [percentage, setPercentage] = useState(20);
+  const getLatestEducation = () => {
+    const degrees: { [key: string]: number } = Object.values(Degree).reduce(
+      (bef, e, idx) => ({
+        [e]: idx,
+        ...bef,
+      }),
+      {}
+    );
 
-  const handlePdfUpload = (file: any) => {
-    setUploadedFile(file);
+    if (!user?.userInfo?.educations || user.userInfo.educations.length === 0) {
+      return undefined;
+    }
+    const currentEducation = user.userInfo.educations.sort(
+      (a, b) => degrees[b.degree] - degrees[a.degree]
+    )[0];
+    return `${currentEducation.degree}, ${currentEducation.feildOfStudy}`;
   };
+  const latestEducation = useMemo(() => getLatestEducation(), [user]);
+  const getYearsOfExperience = () => {
+    if (
+      !user?.userInfo?.experiences ||
+      user.userInfo.experiences.length === 0
+    ) {
+      return undefined;
+    }
+    let diff = 0;
+    for (const experience of user.userInfo.experiences) {
+      diff = differenceInMilliseconds(
+        new Date(experience?.endDate || Date.now()),
+        new Date(experience.startDate)
+      );
+    }
+
+    return formatDuration(
+      intervalToDuration({
+        start: new Date(0),
+        end: new Date(diff),
+      }),
+      {
+        format: ["years", "months"],
+        delimiter: ",",
+      }
+    );
+  };
+  const yearsOfExperience = useMemo(() => getYearsOfExperience(), [user]);
+  if (!user) {
+    return <h1>Loading</h1>;
+  }
+  if (isCompany) {
+    router.push("/");
+    return;
+  }
+
   return (
-    <div className="w-full lg:h-screen md:h-full   bg-slate-100">
-      <Navbar />
-      <div className="bg-white py-5 px-20 w-full h-fit rounded-lg  shadow-sm mt-20 lg:flex md:block ">
-        <div className="lg:w-[20%] md:w-full">
-          <Image
-            width={700}
-            height={700}
-            alt="profile"
-            src={profileInfo.photo}
-            className="rounded-full w-60 h-60 -mt-16"
-          />
-        </div>
-        <div className="m-5 lg:w-[80%] md:w-full">
-          <p className="text-4xl font-bold mb-10">{profileInfo.name}</p>
-          <p className="text-2xl font-normal md:w-full lg:w-[700px]">
-            {profileInfo.bio}
-          </p>
-          <div className="flex justify-end   mt-16">
-            <button className=" flex py-2 bg-blue-500 rounded-3xl px-8  hover:bg-blue-400 transition duration-200 relative  text-white ">
-              <p className="mx-2">contact</p>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
+    <>
+      <Container>
+        <SearchJobBar />
+      </Container>
+      <div className="bg-gray-200 w-full">
+        <Container>
+          <Row gutter={10}>
+            <Col span={8}>
+              <Card>
+                <Title className="!font-thin !text-gray-400" level={3}>
+                  Your Profile Score
+                </Title>
+                <div className="flex justify-center mt-10">
+                  <CircularProgressbar
+                    className="!w-1/2"
+                    value={percentage}
+                    text={`${percentage}%`}
+                  />
+                </div>
+                <p className="mt-5 font-thin">
+                  Reach profile strength of 80% to be assigned to more jobs.
+                </p>
+              </Card>
+            </Col>
+            <Col span={16}>
+              <MainInfoCard
+                className="mb-5"
+                user={user}
+                latestEducation={latestEducation}
+                yearsOfExperience={yearsOfExperience}
+              />
+              <Card className="mb-5">
+                <Title level={2}>Personal Information</Title>
+
+                <Row gutter={5} className="items-center mt-5">
+                  {[
+                    {
+                      label: "Name",
+                      value:
+                        user.userInfo?.firstName +
+                        " " +
+                        user.userInfo?.lastName,
+                    },
+                    {
+                      label: "Birth date",
+                      value: `${format(
+                        new Date(user.userInfo!.birthday),
+                        "dd MMMM yyyy"
+                      )} (Age: ${
+                        formatDuration(
+                          intervalToDuration({
+                            start: new Date(user.userInfo!.birthday),
+                            end: Date.now(),
+                          }),
+                          {
+                            format: ["years"],
+                          }
+                        ).split(" ")[0]
+                      })`,
+                    },
+                    {
+                      label: "Gender",
+                      value: user.userInfo?.gender,
+                    },
+                    {
+                      label: "Nationality",
+                      value: user.userInfo?.nationality.name,
+                    },
+                    {
+                      label: "Residence country",
+                      value: user.userInfo?.residenceCountry.name,
+                    },
+                  ].map((e) => (
+                    <KeyValueColumn {...e} key={e.label} />
+                  ))}
+                </Row>
+              </Card>
+              <Card>
+                <Title level={2}>Contact Information</Title>
+
+                <Row gutter={5} className="items-center mt-5">
+                  {[
+                    {
+                      label: "Email address",
+                      value: user.email,
+                    },
+                    {
+                      label: "Mobile number",
+                      value: user.userInfo?.mobilePhone,
+                    },
+                  ].map((e) => (
+                    <KeyValueColumn {...e} key={e.label} />
+                  ))}
+                </Row>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
       </div>
-      <div className="lg:flex md:block gap-5 mx-5 m-5">
-        <div className="bg-white lg:w-[30%] md:w-full p-10    rounded-lg  shadow-sm mt-10  ">
-          <p className="text-4xl font-normal mb-5">Intro</p>
-          {profileInfo.intro.map((item, idx) => (
-            <div key={idx} className="flex flex-col">
-              <div className="flex mb-5">
-                <p className="mx-3 text-blue-500 ">{item.icon}</p>
-                <p className="w-full">{item.title}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="bg-white md:w-full  lg:w-[70%] p-10     rounded-lg  shadow-sm mt-10 ">
-          <p className="text-4xl font-normal mb-5">Intro</p>
-          <p className="text-lg font-medium">
-            As a BBA accounting and finance graduate with two years of
-            experience as an accountant, I am proficient in using ERP software
-            such as QuickBooks and Oracle. My knowledge and expertise in
-            accounting principles, financial reporting, and data analysis will
-            help me excel in my role as an accountant. I am passionate about
-            providing accurate financial information to support the growth of
-            the company and ensure compliance with regulatory requirements
-          </p>
-          <div className="flex flex-col items-end justify-center">
-            <div className="mr-6">
-              <PdfUploader onUpload={handlePdfUpload} />
-            </div>
-            {uploadedFile ? (
-              <p>Selected PDF: {uploadedFile.name}</p>
-            ) : (
-              <p>No PDF file selected.</p>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
+
+type MainCardProps = {
+  user: User;
+  latestEducation?: string;
+  yearsOfExperience?: string;
+  className?: string;
+};
+const MainInfoCard = ({
+  user,
+  yearsOfExperience,
+  latestEducation,
+  className,
+}: MainCardProps) => (
+  <Card className={className}>
+    <Row gutter={20}>
+      <Col span={6}>
+        <Image
+          src={getPhotoLink(user.userInfo!.photo.url)}
+          className="w-full h-full rounded-full"
+          alt="avatar"
+        />
+      </Col>
+      <Col span={18}>
+        <Title level={3}>
+          {user.userInfo?.firstName} {user.userInfo?.lastName}
+        </Title>
+        <Row gutter={5} className="items-center">
+          {[
+            {
+              label: "Location",
+              value: user?.userInfo?.residenceCountry.name,
+            },
+            {
+              label: "Education",
+              value: latestEducation || <Link href="/">this is bad</Link>,
+            },
+            {
+              label: "Experience",
+              value: yearsOfExperience || <Link href="/">this is bad</Link>,
+            },
+          ].map((e) => (
+            <KeyValueColumn {...e} key={e.label} />
+          ))}
+        </Row>
+      </Col>
+    </Row>
+  </Card>
+);
+
+export const KeyValueColumn = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: any;
+}) => (
+  <Fragment>
+    <Col span={8} className="mt-1">
+      <p className="font-bold">{label}</p>
+    </Col>
+    <Col span={16}>
+      <p className="text-gray-500">{value}</p>
+    </Col>
+  </Fragment>
+);
 
 export default Profile;

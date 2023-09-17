@@ -24,16 +24,12 @@ function PromotionFeed() {
           </p>
           <div className="flex space-x-3 items-center">
             <button className=" bg-blue-500 rounded-3xl px-8 py-1 text-white ">
-            <Link href="/postjob">
-            Post Jobs
-              </Link>
+              <Link href="/main">Post Jobs</Link>
             </button>
-            
+
             <p>or</p>
             <button className="border border-blue-500 rounded-3xl px-8 py-1 text-blue-500">
-              <Link href="/find-job">
-              Find Work
-              </Link>
+              <Link href="/find-job">Find Work</Link>
             </button>
           </div>
         </div>

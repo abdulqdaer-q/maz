@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { message } from "antd";
@@ -9,28 +9,29 @@ import { User } from "@/types/User";
 import { axios } from "@/utils/axios";
 
 type Props = {
-    children?: React.ReactNode
-  };
+  children?: React.ReactNode;
+};
 const AuthProvider = ({ children }: Props) => {
   const [userData, setUserData] = useState<User>();
-  const [isLoading, setIsLoading] = useState(false);
-  
+  const [isLoading, setIsLoading] = useState(true);
+  const [isCompany, setIsCompany] = useState(false);
+
   const authToken = getToken();
 
   const fetchLoggedInUser = async (token: string) => {
-    setIsLoading(true);
     try {
-      
-      const {data} = await axios.get(`/users/me`, {
+      const { data } = await axios.get(`/users/me`, {
         headers: { Authorization: `${BEARER} ${token}` },
-      }); 
-      const {id} = data;
-      const {data: realUser} = await axios.get<User>(`/users/${id}?populate=user_info,user_info.photo`)
-      
+      });
+      const { id } = data;
+      const { data: realUser } = await axios.get<User>(
+        `/users/${id}?populate=userInfo,userInfo.photo,company,userInfo.residenceCountry,userInfo.nationality,userInfo.educations,userInfo.experiences`
+      );
+      setIsCompany(!!realUser.company);
+
       setUserData(realUser);
     } catch (error) {
       console.error(error);
-      message.error("Error While Getting Logged In User Details");
     } finally {
       setIsLoading(false);
     }
@@ -43,12 +44,14 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     if (authToken) {
       fetchLoggedInUser(authToken);
+      return;
     }
+    setIsLoading(false);
   }, [authToken]);
 
   return (
     <AuthContext.Provider
-      value={{ user: userData, setUser: handleUser, isLoading }}
+      value={{ user: userData, setUser: handleUser, isLoading, isCompany }}
     >
       {children}
     </AuthContext.Provider>
