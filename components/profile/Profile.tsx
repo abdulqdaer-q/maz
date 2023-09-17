@@ -4,6 +4,7 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { getPhotoLink } from "@/lib/getPhotoLink";
 import { Degree } from "@/types/Education";
 import { User } from "@/types/User";
+import { Views } from "@/types/View";
 import { axios } from "@/utils/axios";
 import { DeleteFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import {
@@ -42,6 +43,7 @@ type Props = {
 };
 const Profile = ({ user, showEdit = false, setReload }: Props) => {
   const [percentage, setPercentage] = useState(20);
+  const [views, setViews] = useState<Views>([]);
   const getLatestEducation = () => {
     const degrees: { [key: string]: number } = Object.values(Degree).reduce(
       (bef, e, idx) => ({
@@ -89,7 +91,19 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
   const yearsOfExperience =
     useMemo(() => getYearsOfExperience(), [user]) ||
     (showEdit ? undefined : "No Experience");
-
+  useEffect(() => {
+    if (showEdit) {
+      const fetchViews = async () => {
+        const { data } = await axios.get<Views>(
+          `/views?filters[visitedUser][id][$eq]=${
+            user!.userInfo!.id
+          }&populate[userInfo][fields][0]=id&populate[userInfo][populate][user][fields][0]=id&populate[userInfo][fields][1]=firstName&populate[userInfo][fields][2]=lastName&populate[userInfo][populate][photo][fields][0]=url&populate[visitedUser][fields][0]=id&pagination[limit]=5`
+        );
+        setViews(data);
+      };
+      fetchViews();
+    }
+  }, []);
   return (
     <>
       <Container>
@@ -116,6 +130,80 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                   </p>
                 )}
               </Card>
+
+              {showEdit && (
+                <Card className="mt-5">
+                  <Title className="!font-bold !text-gray-700" level={4}>
+                    Check who saw your profile
+                  </Title>
+                  <p className="mb-10 text-xs text-gray-400">
+                    Here You can see lastest 5 people who saw Your profile
+                  </p>
+                  {views.map((view) => (
+                    <Row key={view.id} gutter={10} className="mb-3">
+                      <Col span={6}>
+                        <Image
+                          src={getPhotoLink(view.userInfo!.photo.url)}
+                          className="!w-14 !h-14 rounded-full"
+                          alt="avatar"
+                        />
+                      </Col>
+                      <Col span={18}>
+                        <Link
+                          key={view.id}
+                          href={`/profile/${view.userInfo.user!.id}`}
+                        >
+                          <>
+                            <Title level={5}>
+                              {view.userInfo.firstName +
+                                " " +
+                                view.userInfo.lastName}
+                            </Title>
+                            <p className="text-xs text-gray-500">
+                              Viewed :{" "}
+                              {
+                                formatDuration(
+                                  intervalToDuration({
+                                    start: new Date(view.updatedAt),
+                                    end: Date.now(),
+                                  }),
+                                  {
+                                    format: [
+                                      "days",
+                                      "hours",
+                                      "minutes",
+                                      "seconds",
+                                    ],
+                                    delimiter: ",",
+                                  }
+                                )
+                                  .replaceAll(" ", "")
+                                  .replaceAll("days", "d")
+                                  .replaceAll("day", "d")
+                                  .replaceAll("hours", "h")
+                                  .replaceAll("hour", "h")
+                                  .replaceAll("seconds", "s")
+                                  .replaceAll("minutes", "m")
+                                  .replaceAll("minute", "m")
+                                  .split(",")[0]
+                              }
+                              {" ago"}
+                            </p>
+                          </>
+                        </Link>
+                      </Col>
+                    </Row>
+                  ))}
+                </Card>
+              )}
+            </Col>
+            <Col span={16}>
+              <MainInfoCard
+                className="mb-5"
+                user={user}
+                latestEducation={latestEducation}
+                yearsOfExperience={yearsOfExperience}
+              />
               <Card className="my-5">
                 <Title level={3}>Contact Information</Title>
                 <Row className="items-center mt-5">
@@ -133,21 +221,6 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                   ))}
                 </Row>
               </Card>
-              {showEdit && (
-                <Card className="mt-5">
-                  <Title className="!font-thin !text-gray-400" level={4}>
-                    Check who saw your profile
-                  </Title>
-                </Card>
-              )}
-            </Col>
-            <Col span={16}>
-              <MainInfoCard
-                className="mb-5"
-                user={user}
-                latestEducation={latestEducation}
-                yearsOfExperience={yearsOfExperience}
-              />
               <Card className="mb-5">
                 <div className="flex justify-between">
                   <Title level={2}>Personal Information</Title>

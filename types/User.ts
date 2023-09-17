@@ -35,6 +35,9 @@ export interface UserInfo {
   educations?: Education[];
   experiences?: Experience[];
   cv?: Photo;
+  user?: {
+    id: number;
+  };
 }
 
 export interface Company {}
