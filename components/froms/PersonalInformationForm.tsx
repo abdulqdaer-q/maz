@@ -93,6 +93,8 @@ const PersonalInformation = ({
   if (isLoading) {
     return <Skeleton active={isLoading} className="min-h-[30vh]" />;
   }
+  console.log({user});
+  
   return (
     <FillInformationWrapper
       title="Personal Details"

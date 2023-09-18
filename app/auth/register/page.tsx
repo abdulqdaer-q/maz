@@ -1,5 +1,6 @@
 "use client";
 import LoginWrapper from "@/components/wrappers/LoginWrapper";
+import { useAuthContext } from "@/contexts/AuthContext";
 import { submitKey } from "@/lib/message-keys";
 import { User } from "@/types/User";
 import { axios } from "@/utils/axios";
@@ -10,8 +11,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const MyForm = () => {
-  const [jobTitles, setJobTitles] = useState();
-  useEffect(() => {}, []);
+  const {setUser, setForceReload} = useAuthContext();
   const router = useRouter();
   const handleFormSubmit = async (values: any) => {
     message.open({
@@ -25,6 +25,7 @@ const MyForm = () => {
       password: values.password,
     };
     const { data } = await axios.post<{ user: User; jwt: string }>(
+      
       "/auth/local/register",
       registerBody
     );
@@ -37,6 +38,7 @@ const MyForm = () => {
     };
     await axios.post("/user-infos", { data: userInfoBody });
     setToken(data.jwt);
+    setForceReload(true);
     message.open({
       type: "success",
       content: `Welcome  ${values.firstName}!`,
