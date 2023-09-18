@@ -106,7 +106,7 @@ const PersonalInformation = ({
           ? mediaToForm(user.userInfo.photo.id)
           : undefined,
         residenceCountry: user?.userInfo?.residenceCountry?.id,
-        nationality: user?.userInfo?.nationality.id,
+        nationality: user?.userInfo?.nationality?.id,
         gender: user?.userInfo?.gender || Gender.MALE,
         cv: user?.userInfo?.cv?.id
           ? mediaToForm(user.userInfo.cv.id)
