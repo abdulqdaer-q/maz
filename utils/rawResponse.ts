@@ -24,8 +24,12 @@ const getReturnedObject = (attributes: any, id: string) => {
 
 export const responseParser = <T>(
   response: Response<T>
-): ProcessedObject | ProcessedObject[] => {
-  if (!response?.data) return response;
+): ProcessedObject | ProcessedObject[] | null => {
+  if (response && response.data === null) {
+    return null;
+  }
+  if (!response?.data)
+    return response;
 
   if (!Array.isArray(response.data)) {
     const { id, attributes } = response.data as unknown as {

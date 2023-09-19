@@ -51,8 +51,10 @@ const Index =({onAfterSubmit, id, ...rest }: Props) => {
   useEffect(() => {
     const fetchExperience = async (id: number) => {
       const { data } = await axios.get<Education>(
-        `/educations/${id}?populate[country][fields][0]=id&populate[certificate][fleds][0]=id&populate[certificate][fleds][1]=url&populate[certificate][fleds][2]=name`
+        `/educations/${id}?populate[country][fields][0]=id&populate[certificate][fields][0]=id&populate[certificate][fields][1]=url&populate[certificate][fields][2]=name`
       );
+      console.log(data);
+      
       setEducation({
         ...data,
         graduationDate: dayjs(data.graduationDate),
@@ -139,7 +141,7 @@ const Index =({onAfterSubmit, id, ...rest }: Props) => {
         <Form.Item
           label="Grade"
           name="grade"
-          rules={[{ min: 60 }, { max: 100 }]}
+          rules={[{ min: 60 , max: 100, required: false}]}
         >
           <InputNumber className="!w-full" />
         </Form.Item>
@@ -148,7 +150,7 @@ const Index =({onAfterSubmit, id, ...rest }: Props) => {
         <Form.Item
           label="Description"
           name="description"
-          rules={[{ min: 60 }, { max: 100 }]}
+
         >
           <TextArea rows={6} className="!w-full" />
         </Form.Item>
