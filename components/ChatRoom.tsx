@@ -1,12 +1,16 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import io from "socket.io-client";
+
 import Message from "./Message";
 import Sidebar from "./ChatRoomSideBar";
-import Birawi from "../assets/birawi.jpg";
-import Khair from "../assets/khair.jpg";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { socket } from "@/app/layout";
+import { useRouter } from "next/navigation";
+import { axios } from "@/utils/axios";
+import { message } from "antd";
 
-const socket = io("http://localhost:3001");
+
+
 
 // Change URL as needed
 
@@ -16,20 +20,22 @@ type Message = {
   isSent: boolean;
 };
 const ChatRoom: React.FC = () => {
+  const router = useRouter();
+  const {user} = useAuthContext();
   const [messages, setMessages] = useState<
     { chat: string; message: string; sender: string; isSent: boolean }[]
   >([]);
   const [inputMessage, setInputMessage] = useState("");
-  const [activeChat, setActiveChat] = useState<string | null>(null);
+  const [activeChat, setActiveChat] = useState<number | null>(null);
   const [selectedChat, setSelectedChat] = useState<{
     name: string;
     image: string;
   } | null>(null);
   const [chatMessages, setChatMessages] = useState<{
-    [chatName: string]: Message[];
+    [chatName: number]: Message[];
   }>({});
 
-  useEffect(() => {
+  /* useEffect(() => {
     socket.on(
       "chat-message-t",
       ({ chat, message }: { chat: string; message: string }) => {
@@ -42,39 +48,76 @@ const ChatRoom: React.FC = () => {
         }));
       }
     );
-  }, []);
+  }, []); */
+  useEffect( () => {
+    if (!user) {
+      console.log('a7a');
+      return;
+    }
+    const fetcher=  async () => {
+      const {data} = await axios.get('/messages')
+    };
+    fetcher();
+    socket.on('message', ({from, activeChat ,message}) => {
+        setChatMessages((prevChatMessages) => ({
+          ...prevChatMessages,
+          [activeChat!]: [
+            ...(prevChatMessages[activeChat!] || []),
+            { message: message, sender: from === user!.email ? 'You': user!.email, isSent: from === user!.email },
+          ],
+        }));
+      
+    });
+    return () => socket.off('message')
+
+  }, [activeChat]);
 
   const handleSendMessage = () => {
     if (!activeChat) return;
 
-    socket.emit("chat-message", { chat: activeChat, message: inputMessage });
-    console.log('s');
+    socket.emit("message", { from: user?.email, message: inputMessage, activeChat});
     
-    setChatMessages((prevChatMessages) => ({
-      ...prevChatMessages,
-      [activeChat]: [
-        ...(prevChatMessages[activeChat] || []),
-        { message: inputMessage, sender: "You", isSent: true },
-      ],
-    }));
+    
     setInputMessage("");
   };
-  const handleChatSelect = (chat: string, image: string) => {
+  const handleChatSelect = async (chat: number, image: string, name: string) => {
+    if (!user) {
+      message.error('Please Log in');
+      return;
+    }
+    const user1 = Math.min(chat, user.id);
+    const user2 = Math.max(chat, user.id);
+    let chatId = 0;
+   /*  const {data} = await axios.get(`/chats?populate[user1][fields][0]=id&populate[user2][fields][0]=id&filters[user1][id][$eq]=${user1}&filters[user2][id][$eq]=${user2}`)
+    if (data.length > 0 ){
+      chatId = data[0].id;
+    }
+    else {
+     const {data: returnedChat} = await axios.post('/chats', {
+      data: {
+        user1, user2
+      }
+     });
+     chatId = returnedChat;
+     
+    } */
     setActiveChat(chat);
-    setSelectedChat({ name: chat, image });
+    setSelectedChat({ name, image });
+    router.push('#@'+chat)
+    
   };
 
   return (
     <div className="flex h-full w-full ">
       <Sidebar
-        chats={[
+        /* chats={[
           { name: "Birawi", image: Birawi.src },
           { name: "Khair", image: Khair.src },
           // ... Add more chats with names and image paths
-        ]}
+        ]} */
         activeChat={activeChat}
-        onChatSelect={(chatName, chatImage) =>
-          handleChatSelect(chatName, chatImage)
+        onChatSelect={(chatName, chatImage, v) =>
+          handleChatSelect(chatName, chatImage, v )
         }
       />
       <div className="w-3/4  border-l p-4">
@@ -89,7 +132,7 @@ const ChatRoom: React.FC = () => {
           </div>
         )}
         <div className=" h-[790px] overflow-y-auto">
-          {chatMessages[activeChat || ""]?.map(
+          {chatMessages[activeChat || 0]?.map(
             (messageObj: any, index: any) => (
               <Message
                 key={index}

@@ -3,6 +3,7 @@ import SearchJobBar from "@/components/SearchJobBar";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { getPhotoLink } from "@/lib/getPhotoLink";
 import { Degree } from "@/types/Education";
+import { Speciality } from "@/types/Specaility";
 import { User } from "@/types/User";
 import { Views } from "@/types/View";
 import { axios } from "@/utils/axios";
@@ -16,6 +17,7 @@ import {
   message,
   Popconfirm,
   Row,
+  Tag,
 } from "antd";
 import Title from "antd/es/typography/Title";
 import { format, formatDuration, intervalToDuration } from "date-fns";
@@ -31,6 +33,8 @@ import {
 } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import SkillsFormModal from "../modals/SkillsFormModal";
+import SpecialityFormModal from "../modals/SpecialityFormModal";
 
 const Container = ({ children }: PropsWithChildren) => (
   <div className="w-1/2 pt-5 mx-auto">{children}</div>
@@ -43,7 +47,10 @@ type Props = {
 };
 const Profile = ({ user, showEdit = false, setReload }: Props) => {
   const [percentage, setPercentage] = useState(20);
+  const [open, setOpen] = useState(false);
+  const [skillsOpen, setSkillsOpen] = useState(false);
   const [views, setViews] = useState<Views>([]);
+  const [selectedSpeciality, setSelectedSpeciality] = useState<Speciality>();
   const getLatestEducation = () => {
     const degrees: { [key: string]: number } = Object.values(Degree).reduce(
       (bef, e, idx) => ({
@@ -106,6 +113,21 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
   }, []);
   return (
     <>
+      <SpecialityFormModal
+        open={open}
+        initialValues={selectedSpeciality}
+        id={selectedSpeciality?.id}
+        onSuccess={() => {
+          setReload((p) => !p);
+          setOpen(false);
+        }}
+        key={selectedSpeciality?.id}
+        onCancel={() => {
+          setOpen(false);
+          setSelectedSpeciality(undefined);
+        }}
+      />
+      <SkillsFormModal default={user.userInfo?.skills?.map(e => e.id)} setReload={setReload} setOpen={setSkillsOpen} open={skillsOpen} />
       <Container>
         <SearchJobBar />
       </Container>
@@ -196,6 +218,120 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                   ))}
                 </Card>
               )}
+              {(showEdit || !!user.userInfo?.specialities?.length) &&<Card className="mt-5">
+                <div className="flex justify-between">
+                  <Title level={2}>Specialities</Title>
+                  {showEdit && <div>
+                    <Button
+                      icon={<PlusOutlined />}
+                      type="link"
+                      onClick={() => {
+                        setOpen(true);
+                      }}
+                    />
+                  </div>}
+                </div>
+                <Row>
+                  { user.userInfo?.specialities?.map((e) => (
+                    <div className="flex justify-between " key={e.id}>
+                      <KeyValueColumn  label={e.name} value={e.level} />
+                      {showEdit && <div className="flex">
+                      <Button type="link" onClick={() => {
+                        setSelectedSpeciality(e);
+                        setOpen(true);
+                      }} icon={<EditOutlined />} />
+
+                        <Popconfirm
+                          title="Delete the Speciality"
+                          description="Are you sure to delete this Speciality?"
+                          okText="Yes"
+                          cancelText="No"
+                          onConfirm={async () => {
+                            await axios.delete("/specialities/" + e.id);
+                            message.success("deleted successfully");
+                            setReload((p) => !p);
+                          }}
+                        >
+                          <Button type="link" danger icon={<DeleteFilled />} />
+                        </Popconfirm>
+
+                      </div>}
+                    </div>
+                  ))}
+                </Row>
+              </Card>}
+              {(showEdit || !!user.userInfo?.skills?.length) &&<Card className="mt-5">
+                <div className="flex justify-between">
+                  <Title level={2}>Skills</Title>
+                  {showEdit && <div>
+                    <Button
+                      icon={<PlusOutlined />}
+                      type="link"
+                      onClick={() => {
+                        setSkillsOpen(true);
+                      }}
+                    />
+                  </div>}
+                </div>
+                <Row>
+                  { user.userInfo?.skills?.map((e) => (
+                      <Tag closable={showEdit} onClose={async () => {
+                        await axios.put('/user-infos/'+user!.userInfo!.id, {
+                          data: {
+                            skills: user.userInfo?.skills?.filter(x => x.id !== e.id)
+                          }
+                        })
+                        setReload(e => !e);
+                      }} key={e.id}>
+                        {e.name}
+                      </Tag>
+                    
+                    
+                  ))}
+                </Row>
+              </Card>}
+              {(showEdit || !!user.userInfo?.languages?.length) &&<Card className="mt-5">
+                <div className="flex justify-between">
+                  <Title level={2}>Languages</Title>
+                  {showEdit && <div>
+                    <Button
+                      icon={<PlusOutlined />}
+                      type="link"
+                      onClick={() => {
+                        setOpen(true);
+                      }}
+                    />
+                  </div>}
+                </div>
+                <Row>
+                  { user.userInfo?.languages?.map((e) => (
+                    <div className="flex justify-between " key={e.id}>
+                      <KeyValueColumn  label={e.language} value={e.level} />
+                      {showEdit && <div className="flex">
+                      <Button type="link" onClick={() => {
+                        //setSelectedSpeciality(e);
+                        setOpen(true);
+                      }} icon={<EditOutlined />} />
+
+                        <Popconfirm
+                          title="Delete the Speciality"
+                          description="Are you sure to delete this Speciality?"
+                          okText="Yes"
+                          cancelText="No"
+                          onConfirm={async () => {
+                            await axios.delete("/specialities/" + e.id);
+                            message.success("deleted successfully");
+                            setReload((p) => !p);
+                          }}
+                        >
+                          <Button type="link" danger icon={<DeleteFilled />} />
+                        </Popconfirm>
+
+                      </div>}
+                    </div>
+                  ))}
+                </Row>
+              </Card>}
             </Col>
             <Col span={16}>
               <MainInfoCard
@@ -221,7 +357,7 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                   ))}
                 </Row>
               </Card>
-              <Card className="mb-5">
+              <Card>
                 <div className="flex justify-between">
                   <Title level={2}>Personal Information</Title>
                   {showEdit && (
@@ -277,7 +413,7 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
               </Card>
 
               {!!user.userInfo?.experiences?.length && (
-                <Card>
+                <Card className="mt-5">
                   <div className="flex justify-between">
                     <Title level={2}>Experience</Title>
                     {showEdit && (
@@ -430,6 +566,7 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                   </Row>
                 </Card>
               )}
+
               <div className="mb-5"></div>
             </Col>
           </Row>
@@ -506,7 +643,7 @@ export const KeyValueColumn = ({
     <Col span={8} className="mt-1">
       <p className="font-bold">{label}</p>
     </Col>
-    <Col span={16}>
+    <Col span={16} className="mt-1">
       <p className="text-gray-500">{value}</p>
     </Col>
   </Fragment>

@@ -1,7 +1,9 @@
-import ChatRoom from "@/components/ChatRoom";
-import Navbar from "@/components/Navbar";
+'use client'
 import PromotionFeed from "@/components/PromotionFeed";
 
+
 export default function Home() {
+
+  
   return <PromotionFeed />;
 }

@@ -16,7 +16,7 @@ const Page = () => {
   useEffect(() => {
     const fetchUser = async () => {
       const { data: realUser } = await axios.get<User>(
-        `/users/${+id}?populate=userInfo,userInfo.photo,company,userInfo.residenceCountry,userInfo.nationality,userInfo.educations,userInfo.experiences,userInfo.cv,userInfo.experiences.companyIndustry,userInfo.experiences.jobLocation,userInfo.educations.country`
+        `/users/${+id}?populate=userInfo,userInfo.photo,company,userInfo.residenceCountry,userInfo.nationality,userInfo.educations,userInfo.experiences,userInfo.cv,userInfo.experiences.companyIndustry,userInfo.experiences.jobLocation,userInfo.educations.country,userInfo.specialities,userInfo.skills,userInfo.languages`
       );
       setUser(realUser);
     };
