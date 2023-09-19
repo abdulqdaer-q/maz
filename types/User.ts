@@ -1,6 +1,7 @@
 import { Country } from "./Country";
 import { Education } from "./Education";
 import { Experience } from "./Experience";
+import { Languages, Skills, Specialities } from "./Specaility";
 
 export interface Photo {
   id: number;
@@ -38,6 +39,9 @@ export interface UserInfo {
   user?: {
     id: number;
   };
+  specialities?: Specialities;
+  skills?: Skills;
+  languages?: Languages;
 }
 
 export interface Company {}
