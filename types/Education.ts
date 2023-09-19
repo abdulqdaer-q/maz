@@ -19,3 +19,4 @@ export enum Degree {
   MASTER = "Master's",
   DOCTORATE = "Doctorate",
 }
+

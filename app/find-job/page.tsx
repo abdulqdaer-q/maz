@@ -1,76 +1,72 @@
 "use client"
-import Navbar from "@/components/Navbar";
-import SearchBar from "@/components/SearchBar";
-import Image from "next/image";
-import findjop from "../../assets/findJob2.png";
+
+import ApplyJob from "@/components/ApplyJob";
 import Filter from "@/components/Filter";
-import JobCard from "@/components/JobCard";
-import React, { useEffect, useState } from 'react'
-import { axios } from "@/utils/axios";
-import {BASE_SERVEFR_URL} from '../../utils/constant';
+import JobCard from "@/components/JobCa";
+
 
 const Page = () => {
-    const [jobs, setjobs] = useState();
+  const handleApply = () => {
+    console.log("apply")
+  }
 
-    useEffect(() => {
-        const fetchDataAsync = async () => {
-          try {
-            const response = await axios("/jobs?populate=company,company.companyLogo,job");
-            setjobs(response.data.data);
-            console.log(response.data.data[0].attributes.company?.data?.attributes.companyLogo?.data);
-            
-          
-          } catch (error) {
-            
-            console.error(error);
-          }
-        };
-    
-        fetchDataAsync();
-      }, []);
-      console.log(jobs)
-  
   return (
-    <div>
-      <Navbar />
-      <div className=" px-10 pt-5 lg:pt-0 lg:px-20 bg-[#D9EAF5] h-[750px] lg:h-[500px]  flex flex-row justify-center  items-center flex-wrap">
-        <div className=" lg:w-[60%] flex flex-col gap-10 ">
-          <h1 className=" text-[#444C63]  font-bold text-[45px] ">Find Job</h1>
-          <p className="text-[1.5rem]  font-[400]">
-            create a profile and apply for new job opportunities find
-            professionals that best match your job requirements
-          </p>
-          <SearchBar />
-        </div>
-        <div className=" lg:w-[40%]">
-          <Image
-            className=" m-auto"
-            width={400}
-            height={400}
-            src={findjop}
-            alt="offer.png"
-          />
-        </div>
+    <div className="flex  m-28   justify-between">
+      <div className="w-1/4">
+        <Filter />
       </div>
-      <div className=" pt-5 px-5 md:grid md:grid-cols-4 gap-10 flex flex-col">
-        <div className="col-span-1">
-          <Filter />
-        </div>
-        <div className="col-span-3 grid grid-cols-1 gap-y-5 mx-0 mt-12 ">
-          {jobs && jobs.map((job) => (
-            <JobCard
-              key={job.id}
-              id={job.id}
-              title={job.attributes.job?.data?.attributes.jobTitle}
-              image={BASE_SERVEFR_URL + job.attributes.company?.data?.attributes.companyLogo?.data[0].attributes.url}
-              name={job.attributes.company?.data?.attributes.name}
-              isCompany={job.isCompany}
-              salary={job.attributes.salary}
-              time={job.attributes.type}
-              description={job.attributes.description}
-            />
-          ))}
-        </div>
+      <div className="w-1/3">
+        <JobCard
+          id="2"
+          title="Chinese Marketing Planning - (CAN SPEAK CHINESE AND ENGLISH) WORK EXPERIENCE: BLOCKCHAIN"
+          companyName="Grand Fortune Road Management Consultancies"
+          location="Dubai"
+          maxsalary="1500"
+          minsalary="500"
+          time="2 days"
+          description="As a Marketing Specialist, you will be responsible for formulating and executing comprehensive marketing strategies and event planning, focusing on media cooperation in overseas and online markets. At the same time, you will also be responsible for the management of online media advertising, the editing of platform copywriting, and event packaging. Specific responsibilities include, but are not limited to, the following:"
+        />
+        <JobCard
+          id="2"
+          title="Chinese Marketing Planning - (CAN SPEAK CHINESE AND ENGLISH) WORK EXPERIENCE: BLOCKCHAIN"
+          companyName="Grand Fortune Road Management Consultancies"
+          location="Dubai"
+          maxsalary="1500"
+          minsalary="500"
+          time="2 days"
+          description="As a Marketing Specialist, you will be responsible for formulating and executing comprehensive marketing strategies and event planning, focusing on media cooperation in overseas and online markets. At the same time, you will also be responsible for the management of online media advertising, the editing of platform copywriting, and event packaging. Specific responsibilities include, but are not limited to, the following:"
+        />
+      </div>
+
+      <div className="w-1/4">
+        <ApplyJob
+          id="2"
+          title="Chinese Marketing Planning - (CAN SPEAK CHINESE AND ENGLISH) WORK EXPERIENCE: BLOCKCHAIN"
+          companyName="Grand Fortune Road Management Consultancies"
+          location="Dubai"
+          maxsalary="1500"
+          minsalary="500"
+          time="2 days"
+          description="As a Marketing Specialist, you will be responsible for formulating and executing comprehensive marketing strategies and event planning, focusing on media cooperation in overseas and online markets. At the same time, you will also be responsible for the management of online media advertising, the editing of platform copywriting, and event packaging. Specific responsibilities include, but are not limited to, the following:"
+          skills="Bachelor degree or above in marketing, advertising media, or related majors is preferred.
+          Have at least 1 year of experience in market planning, event planning, or related work. Applicants with experience in overseas markets will be given priority.
+          Familiar with the process and strategies of online media cooperation, familiar with the promotion channels of different platforms, and has rich docking experience.
+          Have good creative and copywriting skills, and be able to write attractive advertising copy and platform copy.
+          Have work experience related to the Metaverse and blockchain and a certain understanding of the industry and products.
+          Excellent communication and coordination skills, with the ability to work effectively with internal teams and external partners.
+          Good data analysis skills and the ability to make reasonable decisions and optimization measures based on market data
+          Proficient in office software, such as the Microsoft Office suite (Word, Excel, PowerPoint, etc.).
+          There are no restrictions on nationality or gender.
+          BLOCKCHAIN EXPERIENCE"
+          industry="IT Services"
+          employmentType="Full Time Employee"
+          numberOfVacancies="1"
+          yearsOfExperience="2"
+          nationality="China; Macau; Singapore; Thailand"
+          maxAge="40"
+          minAge="25"
+          onApply={handleApply}
+        />
       </div>
     </div>
   );

@@ -1,18 +1,21 @@
 "use client";
+import useCountries from "@/app/hooks/useCountries";
 import LoginWrapper from "@/components/wrappers/LoginWrapper";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { submitKey } from "@/lib/message-keys";
 import { User } from "@/types/User";
 import { axios } from "@/utils/axios";
 import { setToken } from "@/utils/helper";
-import { Col, Form, Input, message, Row, UploadProps } from "antd";
+import { Col, Form, Input, message, Row, Select, UploadProps } from "antd";
 import Password from "antd/es/input/Password";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
+import { CompanySize } from "@/types/Company";
 const MyForm = () => {
-  const {setUser, setForceReload} = useAuthContext();
+  const { setUser, setForceReload } = useAuthContext();
   const router = useRouter();
+  const countries = useCountries();
+
   const handleFormSubmit = async (values: any) => {
     message.open({
       type: "loading",
@@ -20,109 +23,63 @@ const MyForm = () => {
       key: submitKey,
     });
     const registerBody = {
-      email: values.email,
-      username: values.email,
+      email: values.workEmail,
+      username: values.workEmail,
       password: values.password,
     };
     const { data } = await axios.post<{ user: User; jwt: string }>(
-      
+
       "/auth/local/register",
       registerBody
     );
     const id = data.user.id;
-    const userInfoBody = {
-      firstName: values.firstName,
-      lastName: values.lastName,
-      mobilePhone: values.mobilePhone,
+    const CompanyInfoBody = {
+      ...values,
       user: id,
     };
-    await axios.post("/user-infos", { data: userInfoBody });
+    await axios.post("/companies", { data: CompanyInfoBody });
+    console.log(CompanyInfoBody)
     setToken(data.jwt);
     setForceReload(true);
     message.open({
       type: "success",
-      content: `Welcome  ${values.firstName}!`,
+      content: `Welcome  ${values.companyName}!`,
       key: submitKey,
     });
 
-    router.push("/profile/complete-profile/personal-information");
+    router.push("/postjob");
   };
 
-  const uploadProps: UploadProps = {
-    customRequest: (options) => {
-      const fd = new FormData();
-      fd.append("files", options.file);
-      axios
-        .post("/upload", fd)
-        .then((e) => {
-          options!.onSuccess!(e.data);
-        })
-        .catch((err) => {
-          options.onError!({
-            status: 400,
-            name: "error",
-            method: "POST",
-            url: "/upload",
-            message: "upload failed",
-          });
-        });
-    },
-    onChange(info) {
-      console.log(info);
 
-      if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === "done") {
-        console.log({ info });
-
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-  };
 
   return (
     <LoginWrapper
-      title="Register"
+      title="Register As Company"
       body="Already Have an Account"
       linkText="Login"
       linkHref="/auth/login"
       handleFormSubmit={handleFormSubmit}
       submitText="Create My Account"
     >
-      <Row gutter={20}>
-        <Col span={12}>
-          <Form.Item
-            name="firstName"
-            label="First Name"
-            className="w-full"
-            rules={[
-              { required: true, message: "Please input your First Name!" },
-            ]}
-            tooltip="This is a required field"
-          >
-            <Input type="text" className="h-10 block rounded-md" />
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item
-            name="lastName"
-            label="Last Name"
-            className="w-full"
-            rules={[
-              { required: true, message: "Please input your Last Name!" },
-            ]}
-            tooltip="This is a required field"
-          >
-            <Input type="text" className="h-10 block rounded-md" />
-          </Form.Item>
-        </Col>
+      <Row gutter={24}>
         <Col span={24}>
           <Form.Item
-            name="email"
-            label="Email"
+            name="companyName"
+            label="Company Name"
+            className="w-full"
+            rules={[
+              { required: true, message: "Please input your company Name!" },
+            ]}
+            tooltip="This is a required field"
+          >
+            <Input type="text" className="h-10 block rounded-md" placeholder="Enter Company Name" />
+          </Form.Item>
+        </Col>
+
+        <Col span={24}>
+          <Form.Item
+            name="workEmail"
+            label="Work email"
             className="w-full"
             rules={[
               { required: true, message: "Please input your Email!" },
@@ -133,7 +90,7 @@ const MyForm = () => {
             ]}
             tooltip="This is a required field"
           >
-            <Input type="email" className="h-10 block rounded-md" />
+            <Input type="email" className="h-10 block rounded-md" placeholder="e-g companyname@gmail.com" />
           </Form.Item>
         </Col>
         <Col span={24}>
@@ -144,24 +101,51 @@ const MyForm = () => {
             rules={[{ required: true, message: "Please input your Password!" }]}
             tooltip="This is a required field"
           >
-            <Password type="text" className="h-10 rounded-md" />
+            <Password type="text" className="h-10 rounded-md" placeholder="Enter password for your account" />
           </Form.Item>
         </Col>
         <Col span={24}>
           <Form.Item
-            name="mobilePhone"
-            label="Mobile"
+            tooltip="This is a required field"
+            label="Company Location"
+            name="country"
+            rules={[{ required: true, message: "Company Location is required" }]}
+          >
+            <Select size="large" options={countries} placeholder="Choose Country" />
+          </Form.Item>
+        </Col>
+        <Col span={24}>
+          <Form.Item
+            tooltip="This is a required field"
+            label="Company Size"
+            name="companySize"
+
+          >
+            <Select
+              size="large"
+              options={Object.values(CompanySize).map((size) => ({
+                label: size,
+                value: size,
+              }))}
+              placeholder="Select Company Size"
+            />
+          </Form.Item>
+        </Col>
+        <Col span={24}>
+          <Form.Item
+            name="phoneNumber"
+            label="phone Number"
             className="w-full"
             rules={[
-              { required: true, message: "Please input your mobile number" },
+              { required: true, message: "Please input your Phone Number" },
               {
                 pattern: /^(\+\d{1,3})?\d+$/,
-                message: "Invalid mobile number format",
+                message: "Invalid Phone Number format",
               },
             ]}
             tooltip="This is a required Field"
           >
-            <Input type="text" className="h-10 block rounded-md" />
+            <Input type="text" className="h-10 block rounded-md" placeholder="Enter Phone Number" />
           </Form.Item>
         </Col>
         <Col span={24}>

@@ -5,7 +5,7 @@ import FillInformationWrapper, {
 import { useAuthContext } from "@/contexts/AuthContext";
 import { customRequest, onChange } from "@/lib/customRequest";
 import { mediaToList } from "@/lib/mediaToForm";
-import { Degree, Education } from "@/types/Education";
+import { Education } from "@/types/Education";
 import { axios } from "@/utils/axios";
 import { CloudArrowDownIcon } from "@heroicons/react/24/outline";
 import {
@@ -14,171 +14,304 @@ import {
   Form,
   Input,
   InputNumber,
+  Radio,
   Select,
+  Switch,
   Upload,
+  message,
 } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
+import useCountries from "../hooks/useCountries";
+import useIndustries from "../hooks/useIndustries";
+import { EmploymentType } from "@/types/Job";
+import { Gender } from "@/types/User";
 
 type Props = Partial<FillInformationProps> & {
   onAfterSubmit: () => void;
   id?: number;
 };
 const Index = ({ onAfterSubmit, id, ...rest }: Props) => {
-  const { user } = useAuthContext();
+
   const router = useRouter();
+
+  const countries = useCountries();
+  const industries = useIndustries();
   const [loading, setLoading] = useState(true);
-  const [education, setEducation] = useState<any>();
+  const [job, setJob] = useState<any>();
+  const [form] = Form.useForm<any>();
+
+  const validateAges = () => {
+
+    const minimumAge = form.getFieldValue('minimumAge');
+    const maximumAge = form.getFieldValue('maximumAge');
+
+    const parsedMinAge = parseInt(minimumAge);
+    const parsedMaxAge = parseInt(maximumAge);
+
+    if (parsedMinAge < 18) {
+      return Promise.reject(new Error('Minimum age is 18'));
+    } else if (parsedMaxAge > 50) {
+      return Promise.reject(new Error('Maximum age is 50'));
+    } else if (parsedMinAge >= parsedMaxAge) {
+      return Promise.reject(new Error('Minimum age should be less than maximum age'));
+    }
+
+    return Promise.resolve();
+  };
+
+  const validateSalary = () => {
+
+    const minimumSalary = form.getFieldValue('minimumSalary');
+    const maximumSalary = form.getFieldValue('maximumSalary');
+
+    const parsedMinSalary = parseInt(minimumSalary);
+    const parsedMaxSalary = parseInt(maximumSalary);
+
+    if (parsedMinSalary < 50000) {
+      return Promise.reject(new Error('Minimum salary is 50000'));
+    } else if (parsedMaxSalary > 10000000) {
+      return Promise.reject(new Error('Maximum salary is 10000000'));
+    } else if (parsedMinSalary >= parsedMaxSalary) {
+      return Promise.reject(new Error('Minimum salary should be less than maximum Salary'));
+    }
+
+    return Promise.resolve();
+  };
   const handleFormSubmit = async (values: any) => {
-    const certificates = values.certificate?.fileList.map((e: any) => {
-      return e.response[0].id;
-    });
+
+
     const data = {
       ...values,
-      graduationDate: values.graduationDate.format("YYYY-MM-DD"),
-      userInfo: user?.userInfo?.id,
-      certificate: certificates,
+
     };
     if (id) {
-      await axios.put("/educations/" + id, { data });
+      await axios.put("/jobs/" + id, { data });
     } else {
-      await axios.post("/educations", { data });
+      await axios.post("/jobs", { data });
     }
+
+    message.open({
+      type: "success",
+      content: `Welcome  ${values.title}!`,
+
+    });
     onAfterSubmit();
+    console.log(...values)
   };
-  useEffect(() => {
-    const fetchExperience = async (id: number) => {
-      const { data } = await axios.get<Education>(
-        `/educations/${id}?populate[country][fields][0]=id&populate[certificate][fleds][0]=id&populate[certificate][fleds][1]=url&populate[certificate][fleds][2]=name`
-      );
-      setEducation({
-        ...data,
-        graduationDate: dayjs(data.graduationDate),
-        country: data.country!.id,
-      });
-      setLoading(false);
-    };
-    if (id) fetchExperience(id);
-    else setLoading(false);
-  }, [user]);
-  if (loading) return <></>;
+
+
   return (
     <FillInformationWrapper
-      title={`Education details`}
-      subTitle="Adding these details will show employers that you're qualified for the job."
+      title={`Post a Job`}
+      subTitle="Add details of the job."
       onSubmit={handleFormSubmit}
-      initialValues={education}
-      startOver
+      initialValues={job}
+      submitText="Post a Job"
+      hideSkip
+      form={form}
       {...rest}
     >
       <Col span={24}>
         <Form.Item
-          label="Education Level"
-          name="degree"
+          label="Job Title"
+          name="title"
           rules={[
             {
               required: true,
-              message: "Please select your education level",
+              message: "Pleas Enter Job Title",
+            },
+          ]}
+        >
+          <Input size="large" placeholder="Ex. Web Frontend Software Developer" />
+
+        </Form.Item>
+      </Col>
+      <Col span={24}>
+        <Form.Item
+          tooltip="This is a required field"
+          label="Job Location"
+          name="country"
+          rules={[{ required: true, message: "Job Location is required" }]}
+        >
+          <Select size="large" options={countries} placeholder="Choose Country" />
+        </Form.Item>
+      </Col>
+      <Col span={24}>
+        <Form.Item
+          tooltip="This is a required field"
+          label="Job Industry"
+          name="industries"
+          rules={[{ required: true, message: "Job Industry is required" }]}
+        >
+          <Select size="large" options={industries} placeholder="Choose Industry" />
+        </Form.Item>
+      </Col>
+      <Col span={11} className="mr-12">
+        <Form.Item
+          label="Employment Type"
+          name="employmentType"
+          rules={[
+            {
+              required: true,
+              message: "Please select your Employment Type",
             },
           ]}
         >
           <Select
-            options={Object.values(Degree).map((degree) => ({
-              label: degree,
-              value: degree,
+            options={Object.values(EmploymentType).map((type) => ({
+              label: type,
+              value: type,
             }))}
-            placeholder="Select Education level"
+            size="large"
+            placeholder="Select Employment Type"
           />
         </Form.Item>
       </Col>
-      <Col span={24}>
+      <Col span={11}  >
         <Form.Item
-          label="University"
-          name="university"
+          tooltip="This is a required field"
+          label="Nationality"
+          name="nationalities"
+          rules={[{ required: true, message: "Nationality is required" }]}
+
+        >
+          <Select size="large" options={countries} placeholder="Choose Country" />
+        </Form.Item>
+      </Col>
+
+      <Col span={7} className=" mr-4" >
+        <Form.Item
+          label="Number Of Vacancies"
+          name="numberOfVacancies"
           rules={[
             {
               required: true,
-              message: "Please enter the university you attended",
+              message: "Please enter Number Of Vacancies",
             },
           ]}
         >
-          <Input placeholder="E.g University Of Aleppo" />
+          <InputNumber size="large" className="!w-full" />
         </Form.Item>
       </Col>
-      <Col span={24}>
+      <Col span={7} className="mr-8">
         <Form.Item
-          label="Field Of Study (Major)"
-          name="feildOfStudy"
+          label="Minimum Salary"
+          name="minimumSalary"
           rules={[
+
             {
-              required: true,
-              message: "Please enter your field of study (major)",
+              validator: validateSalary,
             },
           ]}
         >
-          <Input placeholder="E.g. Information Technology" />
+          <InputNumber className="!w-full" size="large" type="number" />
         </Form.Item>
       </Col>
-      <Col span={24}>
+      <Col span={7} className="mr-8">
         <Form.Item
-          label="Graduation Date"
-          name="graduationDate"
+          label="Maximum Salary"
+          name="maximumSalary"
           rules={[
+
             {
-              required: true,
-              message: "Please enter your graduation date",
+              validator: validateSalary,
             },
           ]}
         >
-          <DatePicker className="w-full" />
+          <InputNumber className="!w-full" size="large" />
         </Form.Item>
       </Col>
-      <Col span={24}>
+
+
+      <Col span={7} className="mr-8">
         <Form.Item
-          label="Grade"
-          name="grade"
-          rules={[{ min: 60 }, { max: 100 }]}
+          label="Years Of Experience"
+          name="minimumYearsOfExperience"
+
         >
-          <InputNumber className="!w-full" />
+          <InputNumber className="!w-full" size="large" />
         </Form.Item>
       </Col>
+      <Col span={7} className="mr-8">
+        <Form.Item
+          label="Minimum Age"
+          name="minimumAge"
+          rules={[
+
+            {
+              validator: validateAges,
+            },
+          ]}
+
+
+        >
+          <InputNumber className="!w-full" size="large" />
+        </Form.Item>
+      </Col>
+      <Col span={7}>
+        <Form.Item
+          label="Maximum Age"
+          name="maximumAge"
+          rules={[
+
+            {
+              validator: validateAges,
+            },
+          ]}
+
+        >
+          <InputNumber className="!w-full" size="large" />
+        </Form.Item>
+      </Col>
+
+      <Col span={11} className="mr-12">
+        <Form.Item
+          label="Work From Home"
+          name="isWorkFromHome"
+
+        >
+          <Switch size="small" defaultChecked className="mx-10" />
+
+        </Form.Item>
+      </Col>
+      <Col span={11}>
+        <Form.Item
+          tooltip="This is a required field"
+          name="genderPerfrence"
+          label="gender Perfrence"
+
+        >
+          <Radio.Group size="large">
+            <Radio value={Gender.MALE}>Male</Radio>
+            <Radio value={Gender.FEMALE}>Female</Radio>
+          </Radio.Group>
+        </Form.Item>
+      </Col>
+
+
+
+
       <Col span={24}>
         <Form.Item
-          label="Description"
-          name="description"
-          rules={[{ min: 60 }, { max: 100 }]}
+          label="Job Description"
+          name="jobDescription"
+          rules={[{ min: 60 }, { max: 1000 }]}
+
         >
           <TextArea rows={6} className="!w-full" />
         </Form.Item>
       </Col>
-      <Col span={24} className="!mb-20">
-        <Form.Item label="Certificate" name="certificate">
-          <Upload.Dragger
-            multiple={false}
-            maxCount={1}
-            defaultFileList={mediaToList(education?.certificate)}
-            customRequest={customRequest}
-            onChange={onChange}
-          >
-            <p className="ant-upload-drag-icon flex justify-center text-primary">
-              <CloudArrowDownIcon height={32} />
-            </p>
-            <p className="ant-upload-text">
-              Click or drag file to this area to upload
-            </p>
-            <p className="ant-upload-hint">
-              Support for a single or bulk upload. Strictly prohibited from
-              uploading company data or other banned files.
-            </p>
-          </Upload.Dragger>
+      <Col span={24}>
+        <Form.Item
+          label="Desired Skills"
+          name="desiredSkills"
+          rules={[{ min: 60 }, { max: 100 }]}
+        >
+          <TextArea rows={6} className="!w-full" />
         </Form.Item>
-
-        <p className="text-sm text-gray-400 text-center ">
-          Maximum file size: 5 MB. File formats allowed: pdf, doc, docx, and txt
-          only
-        </p>
       </Col>
     </FillInformationWrapper>
   );
