@@ -15,7 +15,7 @@ export default () => {
     <ExperienceForm
       onAfterSubmit={handleAfterSubmit}
       user={user!}
-      id={user?.userInfo?.experiences?.[0].id}
+      id={user?.userInfo?.experiences?.[0]?.id}
     />
   );
 };

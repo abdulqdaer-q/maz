@@ -128,7 +128,7 @@ const [fileList, setFileList] = useState<UploadFile[]>([]);
   };
   return (
     <div className="bg-gray-200 pb-6">
-      <Navbar />
+      
       <main className="bg-white h-full m-20 rounded-3xl pt-4 shadow-md pb-24 px-12">
         <h2 className="text-blue-500 text-4xl text-center mt-6">
           Create Company Page

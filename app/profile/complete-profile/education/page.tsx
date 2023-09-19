@@ -10,7 +10,7 @@ export default () => {
 
   return (
     <EducationForm
-      id={user?.userInfo?.educations?.[0].id}
+      id={user?.userInfo?.educations?.[0]?.id}
       onAfterSubmit={() => {
         router.replace("/profile");
       }}

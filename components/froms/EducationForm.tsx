@@ -26,7 +26,7 @@ type Props = Partial<FillInformationProps> & {
   onAfterSubmit: () => void;
   id?: number;
 };
-export default ({ onAfterSubmit, id, ...rest }: Props) => {
+const Index =({onAfterSubmit, id, ...rest }: Props) => {
   const { user } = useAuthContext();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -183,3 +183,4 @@ export default ({ onAfterSubmit, id, ...rest }: Props) => {
     </FillInformationWrapper>
   );
 };
+export default Index
