@@ -95,9 +95,11 @@ const Index = ({ onAfterSubmit, id, ...rest }: Props) => {
 
     message.open({
       type: "success",
-      content: `Welcome  ${values.title}!`,
+      content: `Great, the job 
+      ${values.title} has been posted !`,
 
     });
+    router.push("../find-job")
     onAfterSubmit();
     console.log(...values)
   };

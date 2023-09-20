@@ -24,7 +24,7 @@ function PromotionFeed() {
           </p>
           <div className="flex space-x-3 items-center">
             <button className=" bg-blue-500 rounded-3xl px-8 py-1 text-white ">
-              <Link href="/main">Post Jobs</Link>
+              <Link href="/postjob">Post Jobs</Link>
             </button>
 
             <p>or</p>
