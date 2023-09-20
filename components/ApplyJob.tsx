@@ -6,21 +6,22 @@ type props = {
     companyName: string;
     location: string;
     industry: string;
-    maxsalary: string;
-    minsalary: string;
+    maxsalary: number;
+    minsalary: number;
     time: string;
     description: string;
     skills: string;
     employmentType: string;
-    numberOfVacancies: string;
-    yearsOfExperience: string;
+    numberOfVacancies: number;
+    yearsOfExperience: number;
     nationality: string;
-    maxAge: string;
-    minAge: string;
+    maxAge: number;
+    minAge: number;
     onApply: (data: any) => void;
+    isOpen: boolean
 };
 const ApplyJob = ({
-    id,
+
     title,
     companyName,
     location,
@@ -36,10 +37,12 @@ const ApplyJob = ({
     nationality,
     maxAge,
     minAge,
-    onApply
+    onApply,
+    isOpen,
 }: props) => {
     return (
-        <div className='w-full  h-full border-t-4 border-primary rounded-md' key={id}>
+        <div className={`w-full  h-full border-t-4 border-primary rounded-md  ${isOpen ? `` : `hidden`}`} >
+
             <div className="w-full p-5 ">
                 <h1 className="font-semibold text-xl mb-3">{title}</h1>
                 <p className=" font-semibold  text-sm  mb-3">{companyName}  <span className=" text-gray-400  font-light"> . {location}</span></p>

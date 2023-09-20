@@ -18,10 +18,11 @@ export interface Photo {
 export enum Gender {
   MALE = "Male",
   FEMALE = "Female",
+  Unspecified = "Gender Unspecified "
 }
 
-export interface Nationality extends Country {}
-export interface ResidenceCountry extends Country {}
+export interface Nationality extends Country { }
+export interface ResidenceCountry extends Country { }
 
 export interface UserInfo {
   id: number;
@@ -44,7 +45,7 @@ export interface UserInfo {
   languages?: Languages;
 }
 
-export interface Company {}
+export interface Company { }
 
 export interface User {
   id: number;

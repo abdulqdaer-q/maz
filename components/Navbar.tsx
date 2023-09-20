@@ -17,14 +17,14 @@ function Navbar() {
   const router = useRouter();
   const handleLogout = () => {
     removeToken();
-    router.push("/login");
+    router.push("/");
   };
   const handleRoute = (route: string) => {
     router.replace(route);
   };
   const items: MenuItemType[] = [
     { key: 1, label: "Home", onClick: () => handleRoute("/") },
-    { key: 2, label: "Find Jobs", onClick: () => handleRoute("/main") },
+    { key: 2, label: "Find Jobs", onClick: () => handleRoute("/find-job") },
   ];
   if (user) {
     items.push(
@@ -63,7 +63,7 @@ function Navbar() {
                       user?.userInfo?.photo
                         ? getPhotoLink(user.userInfo.photo.url)
                         : BASE_SERVEFR_URL +
-                          "/uploads/user_318_159711_35568c738c.avif"
+                        "/uploads/user_318_159711_35568c738c.avif"
                     }
                     size="large"
                     icon={<UserOutlined />}
@@ -81,6 +81,9 @@ function Navbar() {
                 </Link>
                 <Link href="/auth/register">
                   <Button type="primary">Register</Button>
+                </Link>
+                <Link href="/auth/register-company">
+                  <Button type="primary">Register As Company</Button>
                 </Link>
               </>
             )}

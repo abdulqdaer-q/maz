@@ -102,8 +102,7 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
     if (showEdit) {
       const fetchViews = async () => {
         const { data } = await axios.get<Views>(
-          `/views?filters[visitedUser][id][$eq]=${
-            user!.userInfo!.id
+          `/views?filters[visitedUser][id][$eq]=${user!.userInfo!.id
           }&populate[userInfo][fields][0]=id&populate[userInfo][populate][user][fields][0]=id&populate[userInfo][fields][1]=firstName&populate[userInfo][fields][2]=lastName&populate[userInfo][populate][photo][fields][0]=url&populate[visitedUser][fields][0]=id&pagination[limit]=5`
         );
         setViews(data);
@@ -218,7 +217,7 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                   ))}
                 </Card>
               )}
-              {(showEdit || !!user.userInfo?.specialities?.length) &&<Card className="mt-5">
+              {(showEdit || !!user.userInfo?.specialities?.length) && <Card className="mt-5">
                 <div className="flex justify-between">
                   <Title level={2}>Specialities</Title>
                   {showEdit && <div>
@@ -232,14 +231,14 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                   </div>}
                 </div>
                 <Row>
-                  { user.userInfo?.specialities?.map((e) => (
+                  {user.userInfo?.specialities?.map((e) => (
                     <div className="flex justify-between " key={e.id}>
-                      <KeyValueColumn  label={e.name} value={e.level} />
+                      <KeyValueColumn label={e.name} value={e.level} />
                       {showEdit && <div className="flex">
-                      <Button type="link" onClick={() => {
-                        setSelectedSpeciality(e);
-                        setOpen(true);
-                      }} icon={<EditOutlined />} />
+                        <Button type="link" onClick={() => {
+                          setSelectedSpeciality(e);
+                          setOpen(true);
+                        }} icon={<EditOutlined />} />
 
                         <Popconfirm
                           title="Delete the Speciality"
@@ -260,7 +259,7 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                   ))}
                 </Row>
               </Card>}
-              {(showEdit || !!user.userInfo?.skills?.length) &&<Card className="mt-5">
+              {(showEdit || !!user.userInfo?.skills?.length) && <Card className="mt-5">
                 <div className="flex justify-between">
                   <Title level={2}>Skills</Title>
                   {showEdit && <div>
@@ -274,23 +273,23 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                   </div>}
                 </div>
                 <Row>
-                  { user.userInfo?.skills?.map((e) => (
-                      <Tag closable={showEdit} onClose={async () => {
-                        await axios.put('/user-infos/'+user!.userInfo!.id, {
-                          data: {
-                            skills: user.userInfo?.skills?.filter(x => x.id !== e.id)
-                          }
-                        })
-                        setReload(e => !e);
-                      }} key={e.id}>
-                        {e.name}
-                      </Tag>
-                    
-                    
+                  {user.userInfo?.skills?.map((e) => (
+                    <Tag closable={showEdit} onClose={async () => {
+                      await axios.put('/user-infos/' + user!.userInfo!.id, {
+                        data: {
+                          skills: user.userInfo?.skills?.filter(x => x.id !== e.id)
+                        }
+                      })
+                      setReload(e => !e);
+                    }} key={e.id}>
+                      {e.name}
+                    </Tag>
+
+
                   ))}
                 </Row>
               </Card>}
-              {(showEdit || !!user.userInfo?.languages?.length) &&<Card className="mt-5">
+              {(showEdit || !!user.userInfo?.languages?.length) && <Card className="mt-5">
                 <div className="flex justify-between">
                   <Title level={2}>Languages</Title>
                   {showEdit && <div>
@@ -304,14 +303,14 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                   </div>}
                 </div>
                 <Row>
-                  { user.userInfo?.languages?.map((e) => (
+                  {user.userInfo?.languages?.map((e) => (
                     <div className="flex justify-between " key={e.id}>
-                      <KeyValueColumn  label={e.language} value={e.level} />
+                      <KeyValueColumn label={e.language} value={e.level} />
                       {showEdit && <div className="flex">
-                      <Button type="link" onClick={() => {
-                        //setSelectedSpeciality(e);
-                        setOpen(true);
-                      }} icon={<EditOutlined />} />
+                        <Button type="link" onClick={() => {
+                          //setSelectedSpeciality(e);
+                          setOpen(true);
+                        }} icon={<EditOutlined />} />
 
                         <Popconfirm
                           title="Delete the Speciality"
@@ -382,17 +381,16 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                       value: `${format(
                         new Date(user.userInfo!.birthday),
                         "dd MMMM yyyy"
-                      )} (Age: ${
-                        formatDuration(
-                          intervalToDuration({
-                            start: new Date(user.userInfo!.birthday),
-                            end: Date.now(),
-                          }),
-                          {
-                            format: ["years"],
-                          }
-                        ).split(" ")[0]
-                      })`,
+                      )} (Age: ${formatDuration(
+                        intervalToDuration({
+                          start: new Date(user.userInfo!.birthday),
+                          end: Date.now(),
+                        }),
+                        {
+                          format: ["years"],
+                        }
+                      ).split(" ")[0]
+                        })`,
                     },
                     {
                       label: "Gender",
@@ -400,11 +398,11 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                     },
                     {
                       label: "Nationality",
-                      value: user.userInfo?.nationality.name,
+                      value: user.userInfo?.nationality?.name,
                     },
                     {
                       label: "Residence country",
-                      value: user.userInfo?.residenceCountry.name,
+                      value: user.userInfo?.residenceCountry?.name,
                     },
                   ].map((e) => (
                     <KeyValueColumn {...e} key={e.label} />
@@ -469,20 +467,19 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                               value: `${format(
                                 new Date(e.startDate),
                                 "MMMM yyyy"
-                              )} - ${
-                                e.endDate
+                              )} - ${e.endDate
                                   ? format(new Date(e.endDate), "MMMM yyyy")
                                   : "Now"
-                              } (${formatDuration(
-                                intervalToDuration({
-                                  start: new Date(e.startDate),
-                                  end: new Date(e.endDate || Date.now()),
-                                }),
-                                {
-                                  format: ["years", "months"],
-                                  delimiter: ",",
-                                }
-                              )})`,
+                                } (${formatDuration(
+                                  intervalToDuration({
+                                    start: new Date(e.startDate),
+                                    end: new Date(e.endDate || Date.now()),
+                                  }),
+                                  {
+                                    format: ["years", "months"],
+                                    delimiter: ",",
+                                  }
+                                )})`,
                             },
                             {
                               label: "Industry",
