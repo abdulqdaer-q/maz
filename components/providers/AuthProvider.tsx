@@ -40,13 +40,12 @@ const AuthProvider = ({ children }: Props) => {
     setUserData(user);
   };
 
-  let i = 0;
   useEffect(() => {
-
     if (authToken) {
-      console.log({'connected': 'asd'});
       fetchLoggedInUser(authToken);
-      return;
+    }
+    else {
+      setUserData(undefined)
     }
     setIsLoading(false);
   }, [authToken, forceReload]);

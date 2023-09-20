@@ -14,13 +14,13 @@ import { useRouter } from "next/navigation";
 const { Header } = Layout;
 
 function Navbar() {
-  const { user, isLoading } = useAuthContext();
+  const { user, isLoading, setForceReload } = useAuthContext();
   const { onlineUsers } = useSocketContext();
-  console.log({onlineUsers});
   
   const router = useRouter();
   const handleLogout = () => {
     removeToken();
+    setForceReload(e => !e)
     router.push("/");
   };
   const handleRoute = (route: string) => {
