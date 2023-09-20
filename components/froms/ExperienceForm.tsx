@@ -77,7 +77,7 @@ export default ({ id, onAfterSubmit, user, ...rest }: Props) => {
           tooltip="This is a required field"
           label="Job Title"
           name="jobTitle"
-          rules={[{ required: true, message: "Job Title is required" }]}
+          rules={[{ required: true, message: "Job Title is required", type: 'string' }]}
         >
           <Input placeholder="Select Job Title" />
         </Form.Item>
@@ -87,7 +87,7 @@ export default ({ id, onAfterSubmit, user, ...rest }: Props) => {
           tooltip="This is a required field"
           label="Company Name"
           name="companyName"
-          rules={[{ required: true, message: "Company Name is required" }]}
+          rules={[{ required: true, message: "Company Name is required", type:'string' }]}
         >
           <Input placeholder="E.g. Amazon" />
         </Form.Item>
@@ -117,7 +117,7 @@ export default ({ id, onAfterSubmit, user, ...rest }: Props) => {
           tooltip="This is a required field"
           label="Start Date"
           name="startDate"
-          rules={[{ required: true, message: "Start Date is required" }]}
+          rules={[{ required: true, message: "Start Date is required" , type:'date' }]}
         >
           <DatePicker picker="month" className="w-full" />
         </Form.Item>

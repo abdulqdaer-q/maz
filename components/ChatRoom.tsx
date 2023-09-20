@@ -1,15 +1,14 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import Message from "./Message";
 import Sidebar from "./ChatRoomSideBar";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { socket } from "@/app/layout";
+
 import { useRouter } from "next/navigation";
 import { axios } from "@/utils/axios";
 import { message } from "antd";
-
-
+import { useSocketContext } from "@/contexts/SocketContext";
 
 
 // Change URL as needed
@@ -21,12 +20,14 @@ type Message = {
 };
 const ChatRoom: React.FC = () => {
   const router = useRouter();
-  const {user} = useAuthContext();
+  const { user } = useAuthContext();
+  const [_receiver, setReceiver] = useState<number>();
+  const {sendMessage, chats} = useSocketContext();
   const [messages, setMessages] = useState<
     { chat: string; message: string; sender: string; isSent: boolean }[]
   >([]);
   const [inputMessage, setInputMessage] = useState("");
-  const [activeChat, setActiveChat] = useState<number | null>(null);
+  const [activeChat, setActiveChat] = useState<number | null>( (typeof window!=='undefined') ? +window?.location?.hash?.split("#@")?.[1] : null);
   const [selectedChat, setSelectedChat] = useState<{
     name: string;
     image: string;
@@ -34,76 +35,72 @@ const ChatRoom: React.FC = () => {
   const [chatMessages, setChatMessages] = useState<{
     [chatName: number]: Message[];
   }>({});
-
-  /* useEffect(() => {
-    socket.on(
-      "chat-message-t",
-      ({ chat, message }: { chat: string; message: string }) => {
-        setChatMessages((prevChatMessages) => ({
-          ...prevChatMessages,
-          [chat]: [
-            ...(prevChatMessages[chat] || []),
-            { message, sender: "Other User", isSent: false },
-          ],
-        }));
-      }
-    );
-  }, []); */
-  useEffect( () => {
-    if (!user) {
-      console.log('a7a');
+  const ref = useRef();
+  useEffect(() => {
+    if (!activeChat || !user) {
       return;
     }
-    const fetcher=  async () => {
-      const {data} = await axios.get('/messages')
+    const fetcher = async () => {
+      const { data } = await axios.get("/messages?sort=id:asc&populate[sender][fields][0]=id&populate[chat][fields][0]=id&filters[chat][id][$eq]="+activeChat);
+
+      
+      setMessages(data.map (e => ({
+        message: e.message,
+        createdAt: e.createdAt,
+        isSent: e.sender!.id === user!.id,
+        id: e.id
+      })));
+      
     };
     fetcher();
-    socket.on('message', ({from, activeChat ,message}) => {
-        setChatMessages((prevChatMessages) => ({
-          ...prevChatMessages,
-          [activeChat!]: [
-            ...(prevChatMessages[activeChat!] || []),
-            { message: message, sender: from === user!.email ? 'You': user!.email, isSent: from === user!.email },
-          ],
-        }));
-      
-    });
-    return () => socket.off('message')
-
-  }, [activeChat]);
+  }, [activeChat, user]);
 
   const handleSendMessage = () => {
     if (!activeChat) return;
+    sendMessage( {
+        sender: user?.id,
+        message: inputMessage,
+        chat: activeChat,
+        receiver: _receiver
+    });
 
-    socket.emit("message", { from: user?.email, message: inputMessage, activeChat});
-    
-    
     setInputMessage("");
   };
-  const handleChatSelect = async (chat: number, image: string, name: string) => {
-    if (!user) {
-      message.error('Please Log in');
+  useEffect(() => {
+    if (!activeChat || !chats || !user) {
       return;
     }
-    const user1 = Math.min(chat, user.id);
-    const user2 = Math.max(chat, user.id);
-    let chatId = 0;
-   /*  const {data} = await axios.get(`/chats?populate[user1][fields][0]=id&populate[user2][fields][0]=id&filters[user1][id][$eq]=${user1}&filters[user2][id][$eq]=${user2}`)
-    if (data.length > 0 ){
-      chatId = data[0].id;
+    setMessages(msgs => {
+      const nowMessages = (chats?.[activeChat] || []).map(e => ({...e, isSent: e.sender === user.id}));
+      const uniqueIds = {};
+      const total = msgs.concat(nowMessages);
+      const uniqueArray = total.filter(obj => {
+        if (!uniqueIds[obj.id]) {
+          uniqueIds[obj.id] = true;
+          return true;
+        }
+        return false;
+      });
+      return uniqueArray;
+    })
+    if (ref.current) {
+      ref.current.scrollTop = ref.current.scrollHeight;
     }
-    else {
-     const {data: returnedChat} = await axios.post('/chats', {
-      data: {
-        user1, user2
-      }
-     });
-     chatId = returnedChat;
-     
-    } */
+  }, [chats, activeChat, user])
+  const handleChatSelect = async (
+    chat: number,
+    image: string,
+    name: string,
+    receiver: number
+  ) => {
+    if (!user) {
+      message.error("Please Log in");
+      return;
+    }
+    setReceiver(receiver)
     setActiveChat(chat);
     setSelectedChat({ name, image });
-    router.push('#@'+chat)
+    router.push("#@" + chat);
     
   };
 
@@ -116,8 +113,8 @@ const ChatRoom: React.FC = () => {
           // ... Add more chats with names and image paths
         ]} */
         activeChat={activeChat}
-        onChatSelect={(chatName, chatImage, v) =>
-          handleChatSelect(chatName, chatImage, v )
+        onChatSelect={(chatName, chatImage, v, t) =>
+          handleChatSelect(chatName, chatImage, v, t)
         }
       />
       <div className="w-3/4  border-l p-4">
@@ -132,16 +129,15 @@ const ChatRoom: React.FC = () => {
           </div>
         )}
         <div className=" h-[790px] overflow-y-auto">
-          {chatMessages[activeChat || 0]?.map(
-            (messageObj: any, index: any) => (
-              <Message
-                key={index}
-                message={messageObj.message}
-                sender={messageObj.sender}
-                isSent={messageObj.isSent}
-              />
-            )
-          )}
+          {messages.map((messageObj: any, index: any) => (
+            <Message
+              ref={index === messages.length - 1 ? ref : null}
+              key={index}
+              message={messageObj.message}
+              sender={messageObj.createdAt}
+              isSent={messageObj.isSent}
+            />
+          ))}
         </div>
         <div className="mt-4 flex">
           <input

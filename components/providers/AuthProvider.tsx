@@ -1,15 +1,11 @@
 "use client";
-import React, { useState } from "react";
-import { AuthContext } from "../../contexts/AuthContext";
-import { message } from "antd";
-import { API, BEARER } from "../../utils/constant";
-import { useEffect } from "react";
-import { getToken } from "../../utils/helper";
 import { User } from "@/types/User";
 import { axios } from "@/utils/axios";
+import React, { useEffect, useState } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
+import { BEARER } from "../../utils/constant";
+import { getToken } from "../../utils/helper";
 
-import { getPhotoLink } from "@/lib/getPhotoLink";
-import { socket } from "@/app/layout";
 
 type Props = {
   children?: React.ReactNode;
@@ -43,45 +39,18 @@ const AuthProvider = ({ children }: Props) => {
   const handleUser = (user: User) => {
     setUserData(user);
   };
-  const [isConnected, setIsConnected] = useState(socket.connected);
-  
-  useEffect(() => {
-    function onConnect() {
-      setIsConnected(true);
-    }
 
-    function onDisconnect() {
-      setIsConnected(false);
-    }
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
-    socket.connect()
-    return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-      
-      
-    };
-  }, []);
-  useEffect( () => {
-    const user = userData;
-    if (isConnected && user) {
-      socket.emit('join', {
-        id: user!.id,
-        email: user.email,
-        name: user.userInfo?.firstName + " " + user.userInfo?.lastName,
-        image: getPhotoLink(user.userInfo!.photo.url)
-      })
-    }
-  }, [isConnected, userData]);
+  let i = 0;
   useEffect(() => {
+
     if (authToken) {
+      console.log({'connected': 'asd'});
       fetchLoggedInUser(authToken);
       return;
     }
     setIsLoading(false);
   }, [authToken, forceReload]);
-
+  
   return (
     <AuthContext.Provider
       value={{

@@ -194,7 +194,15 @@ const PersonalInformation = ({
           tooltip="This is a required field"
           name="birthday"
           label="Birthday"
-          rules={[{ required: true }]}
+          rules={[{ required: true }, {validator: ((e, v) => {
+            const age = -Math.ceil(v.diff(dayjs(Date.now()), 'months')/12);
+            
+            if (age >= 18) {
+              return Promise.resolve();
+            }
+            return Promise.reject( new Error('You Should Be Atleast 18') );
+            
+          })}]}
         >
           <DatePicker className="w-full" showToday={false} />
         </Form.Item>

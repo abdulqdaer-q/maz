@@ -1,11 +1,10 @@
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Option } from "@/types/Option";
-import { Skill, Skills } from "@/types/Specaility";
+import { Skills } from "@/types/Specaility";
 import { axios } from "@/utils/axios";
 import { Modal, Select } from "antd";
 import { Options } from "autoprefixer";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import SpecialityForm, { SpecialityProps } from "../froms/SpecialityForm";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 type Props = {
   open: boolean;
@@ -17,7 +16,7 @@ const SkillFormModal = ({ open, ...rest }: Props) => {
   const [skills, setSkills] = useState<Option[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOptions, setSelectedOptions] = useState([])
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     setSelectedOptions(e)
   };
   useEffect(() => {

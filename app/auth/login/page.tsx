@@ -7,23 +7,23 @@ import { axios } from "@/utils/axios";
 import { setToken } from "@/utils/helper";
 import { useRouter } from "next/navigation";
 import { submitKey } from "@/lib/message-keys";
+import { useSocketContext } from "@/contexts/SocketContext";
 
 const LoginPage = () => {
-  const { setUser } = useAuthContext();
+  const { setForceReload } = useAuthContext();
+  const {setForceReload: setFReload} = useSocketContext();
   const router = useRouter();
   const handleFormSubmit = async (subData: any) => {
     const { email, password } = subData;
-    message.open({
-      type: "loading",
-      content: "Attempting To Log You In",
-      key: submitKey,
-    });
+  
     const { data } = await axios.post("/auth/local", {
       identifier: email,
       password,
     });
     setToken(data.jwt);
-    setUser(data.user);
+    
+    setFReload(e => !e)
+    setForceReload(e => !e)
     message.open({
       type: "success",
       content: `Welcome back ${data.user.username}!`,

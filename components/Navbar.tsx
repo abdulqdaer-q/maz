@@ -1,5 +1,6 @@
 "use client";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useSocketContext } from "@/contexts/SocketContext";
 import { getPhotoLink } from "@/lib/getPhotoLink";
 import { BASE_SERVEFR_URL } from "@/utils/constant";
 import { removeToken } from "@/utils/helper";
@@ -14,6 +15,9 @@ const { Header } = Layout;
 
 function Navbar() {
   const { user, isLoading } = useAuthContext();
+  const { onlineUsers } = useSocketContext();
+  console.log({onlineUsers});
+  
   const router = useRouter();
   const handleLogout = () => {
     removeToken();

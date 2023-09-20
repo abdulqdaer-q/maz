@@ -1,6 +1,7 @@
 "use client";
 import LoginWrapper from "@/components/wrappers/LoginWrapper";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useSocketContext } from "@/contexts/SocketContext";
 import { submitKey } from "@/lib/message-keys";
 import { User } from "@/types/User";
 import { axios } from "@/utils/axios";
@@ -12,6 +13,7 @@ import { useEffect, useState } from "react";
 
 const MyForm = () => {
   const {setUser, setForceReload} = useAuthContext();
+  const {setForceReload:setFreload} = useSocketContext();
   const router = useRouter();
   const handleFormSubmit = async (values: any) => {
     message.open({
@@ -38,6 +40,7 @@ const MyForm = () => {
     };
     await axios.post("/user-infos", { data: userInfoBody });
     setToken(data.jwt);
+    setFreload(e => !e)
     setForceReload(true);
     message.open({
       type: "success",
@@ -99,7 +102,8 @@ const MyForm = () => {
             label="First Name"
             className="w-full"
             rules={[
-              { required: true, message: "Please input your First Name!" },
+              { required: true, message: "Please input your First Name!", },
+              { pattern:/[a-zA-Z]+/ig, message: 'First Name should be with English charecters '}
             ]}
             tooltip="This is a required field"
           >
@@ -113,6 +117,7 @@ const MyForm = () => {
             className="w-full"
             rules={[
               { required: true, message: "Please input your Last Name!" },
+              { pattern:/[a-zA-Z]+/ig, message: 'Last Name should be with English charecters '}
             ]}
             tooltip="This is a required field"
           >
@@ -141,7 +146,11 @@ const MyForm = () => {
             name="password"
             label="Password"
             className="w-full"
-            rules={[{ required: true, message: "Please input your Password!" }]}
+            rules={[
+              { required: true, message: "Please input your Password!" },
+              { min:8, message: "Min Password length is 8!" }
+          
+          ]}
             tooltip="This is a required field"
           >
             <Password type="text" className="h-10 rounded-md" />
@@ -155,7 +164,7 @@ const MyForm = () => {
             rules={[
               { required: true, message: "Please input your mobile number" },
               {
-                pattern: /^(\+\d{1,3})?\d+$/,
+                pattern: /[0-9]{8,11}/,
                 message: "Invalid mobile number format",
               },
             ]}

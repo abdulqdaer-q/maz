@@ -104,6 +104,7 @@ const Index =({onAfterSubmit, id, ...rest }: Props) => {
               required: true,
               message: "Please enter the university you attended",
             },
+            { pattern:/[a-zA-Z]+/ig, message: 'should be with English charecters '}
           ]}
         >
           <Input placeholder="E.g University Of Aleppo" />
@@ -117,7 +118,9 @@ const Index =({onAfterSubmit, id, ...rest }: Props) => {
             {
               required: true,
               message: "Please enter your field of study (major)",
+              
             },
+            { pattern:/[a-zA-Z]+/ig, message: 'should be with English charecters '}
           ]}
         >
           <Input placeholder="E.g. Information Technology" />
