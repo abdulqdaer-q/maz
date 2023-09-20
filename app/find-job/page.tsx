@@ -87,6 +87,7 @@ const Page = () => {
           minAge={applyJob?.minimumAge}
           onApply={handleOpenApply}
           isOpen={apply}
+          setIsOpen={setApply}
         />
       </div>
     </div>

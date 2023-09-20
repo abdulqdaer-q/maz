@@ -1,3 +1,4 @@
+import { CloseOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import React from 'react'
 type props = {
@@ -19,6 +20,7 @@ type props = {
     minAge: number;
     onApply: (data: any) => void;
     isOpen: boolean
+    setIsOpen: any
 };
 const ApplyJob = ({
 
@@ -39,10 +41,11 @@ const ApplyJob = ({
     minAge,
     onApply,
     isOpen,
+    setIsOpen
 }: props) => {
     return (
         <div className={`w-full  h-full border-t-4 border-primary rounded-md  ${isOpen ? `` : `hidden`}`} >
-
+            <CloseOutlined className='  ml-96 my-5' onClick={() => setIsOpen(false)} />
             <div className="w-full p-5 ">
                 <h1 className="font-semibold text-xl mb-3">{title}</h1>
                 <p className=" font-semibold  text-sm  mb-3">{companyName}  <span className=" text-gray-400  font-light"> . {location}</span></p>
@@ -51,10 +54,10 @@ const ApplyJob = ({
                     <Button type="primary" className="  font-bold text-sm" onClick={onApply}>Apply</Button>
                 </div>
             </div>
-            <div className='  h-96 overflow-y-scroll p-5'>
+            <div className='  h-96 overflow-y-scroll  overflow-x-clip  break-before-all p-5'>
                 <div className='flex flex-col my-4 '>
-                    <h1 className='  font-bold py-1'>Job Description</h1>
-                    <p className=' text-sm text-gray-500'>{description}</p>
+                    <h1 className='   font-bold py-1'>Job Description</h1>
+                    <p className='  text-sm text-gray-500 '>{description}</p>
                 </div>
                 <div className='flex flex-col my-4 '>
                     <h1 className='  font-bold py-1'>Skills</h1>
