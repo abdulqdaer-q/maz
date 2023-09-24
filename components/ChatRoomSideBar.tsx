@@ -37,13 +37,20 @@ const Sidebar: React.FC<SidebarProps> = ({ activeChat, onChatSelect }) => {
     if (user) {
       const fetcher = async () => {
         const { data } = await axios.get<Chat[]>(
-          `/chats?filters[$or][0][user1][id][$eq]=${user.id}&filters[$or][1][user2][id][$eq]=${user.id}&populate[user1][fields][0]=id&populate[user1][populate][company][fields][0]=companyName&populate[user1][populate][userInfo][fields][0]=firstName&populate[user1][populate][userInfo][fields][1]=lastName&populate[user1][populate][userInfo][populate][photo][fields][0]=url&populate[user2][fields][0]=id&populate[user2][populate][company][fields][0]=companyName&populate[user2][populate][userInfo][fields][0]=firstName&populate[user2][populate][userInfo][fields][1]=lastName&populate[user2][populate][userInfo][populate][photo][fields][0]=url`
+          `/chats?filters[$or][0][user1][id][$eq]=${user.id}&filters[$or][1][user2][id][$eq]=${user.id}&populate[user1][fields][0]=id&populate[user1][populate][company][fields][0]=companyName&populate[user1][populate][userInfo][fields][0]=firstName&populate[user1][populate][userInfo][fields][1]=lastName&populate[user1][populate][userInfo][populate][photo][fields][0]=url&populate[user2][fields][0]=id&populate[user2][populate][company][fields][0]=companyName&populate[user2][populate][userInfo][fields][0]=firstName&populate[user2][populate][userInfo][fields][1]=lastName&populate[user2][populate][userInfo][populate][photo][fields][0]=url&sort=id:desc`
         );
+        const online = onlineUsers.map(e => +e).filter((e) => e !== user?.id);
+        console.log({online});
+        
         const chats = 
           data.map((e) => {
             const user1 = e.user1.id;
+            
+            
             if (user1 === user.id) {
               return {
+
+                isOnline: online.findIndex((x) => e.user2.id === x)!==-1,
                 name: !!e.user2.userInfo
                   ? e.user2?.userInfo?.firstName +
                     " " +
@@ -57,6 +64,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeChat, onChatSelect }) => {
               };
             } else {
               return {
+                isOnline: online.findIndex((x) => e.user1.id === x)!==-1,
                 name: !!e.user1.userInfo
                   ? e.user1?.userInfo?.firstName +
                     " " +
@@ -69,7 +77,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeChat, onChatSelect }) => {
                 userId: e.user1.id,
               };
             }
-          })
+          }).sort((a, b) => b.isOnline ? 1 : 0 - (a.isOnline? 1: 0))
+         
+          
           setChats(chats);
           if (firstRender) {
             setFirstRender(false);
@@ -78,7 +88,10 @@ const Sidebar: React.FC<SidebarProps> = ({ activeChat, onChatSelect }) => {
             onChatSelect(f.id, f.image, f.name, f.userId)
           }
       };
-      fetcher();
+      const x = setInterval(() => {
+        fetcher();
+      }, 2500)
+      return () => clearInterval(x); 
     }
   }, [user, relodChats]);
   useEffect(() => {
@@ -89,16 +102,6 @@ const Sidebar: React.FC<SidebarProps> = ({ activeChat, onChatSelect }) => {
     fetcher();
   }, []);
 
-  useEffect(() => {
-    const online = onlineUsers.map(e => +e).filter((e) => e !== user?.id);
-    setChats(chats =>  chats
-            .map((chat: any) => ({
-              ...chat,
-              isOnline: online.some((e) => chat.userId === e),
-            }))
-            .sort((a, b) => b.isOnline ? 1 : 0 - (a.isOnline? 1: 0)))
-    
-  }, [onlineUsers])
  
   const [open, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(-1);

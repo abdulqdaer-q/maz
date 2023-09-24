@@ -1,23 +1,41 @@
 "use client";
+
+import { Option } from '@/types/Option';
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useSocketContext } from "@/contexts/SocketContext";
 import { getPhotoLink } from "@/lib/getPhotoLink";
+import { UserInfo } from "@/types/User";
+import { axios } from "@/utils/axios";
 import { BASE_SERVEFR_URL } from "@/utils/constant";
 import { removeToken } from "@/utils/helper";
 import { UserOutlined } from "@ant-design/icons";
-import { Avatar, Button, Col, Layout, Menu, Row } from "antd";
+import { AutoComplete, Avatar, Button, Col, Input, Layout, Menu, Row } from "antd";
 import { MenuItemType } from "antd/es/menu/hooks/useItems";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 const { Header } = Layout;
 
 function Navbar() {
   const { user, isLoading, setForceReload } = useAuthContext();
   const { onlineUsers } = useSocketContext();
+  const [options, setOptions] = useState<Option[]>([]);
+  const [search, setSearch] = useState('');
   
+  useEffect(( ) => {
+      const fn = async () => {
+          const {data: users} = await axios.get<UserInfo[]>(`/user-infos?populate=user&filters[$or][0][firstName][$containsi]=${search}&filters[$or][1][lastName][$containsi]=${search}`);
+          setOptions(users.filter(e => !!e.user).map(e => ({
+              label: e.firstName + " " + e.lastName,
+              value: e.user!.id
+          })));
+      }
+      fn()
+  }, [search]);
   const router = useRouter();
+  const ref = useRef();
   const handleLogout = () => {
     removeToken();
     setForceReload(e => !e)
@@ -36,6 +54,18 @@ function Navbar() {
       { key: 4, label: "Chat", onClick: () => handleRoute("/chat") }
     );
   }
+  const handleSearch = (value: string) => {
+        setSearch(value);
+        //setOptions(value ? searchResult(value) : []);
+    };
+    
+    const onSelect = (value: string) => {
+      router.replace(`/profile/${value}`);
+      
+      setSearch('');
+      
+    };
+    
   return (
     <Header
       style={{ backgroundColor: "#FFF" }}
@@ -61,6 +91,18 @@ function Navbar() {
           >
             {user && !isLoading ? (
               <>
+               <AutoComplete
+                  popupMatchSelectWidth={252}
+                  style={{ width: 300 }}
+                  options={options}
+                  onSelect={onSelect}
+                  onSearch={handleSearch}
+                  size="large"
+                  autoClearSearchValue
+                  
+        >
+            <Input.Search value={search} size="large" placeholder="search for users" enterButton />
+        </AutoComplete>
                 <Link href="/profile">
                   <Avatar
                     src={ getPhotoLink(user?.userInfo?.photo?.url) }
@@ -75,6 +117,7 @@ function Navbar() {
               </>
             ) : (
               <>
+             
                 <Link href="/auth/login">
                   <Button type="default">Login</Button>
                 </Link>

@@ -24,7 +24,7 @@ const AuthProvider = ({ children }: Props) => {
       });
       const { id } = data;
       const { data: realUser } = await axios.get<User>(
-        `/users/${id}?populate=userInfo,userInfo.photo,company,userInfo.residenceCountry,userInfo.nationality,userInfo.educations,userInfo.experiences,userInfo.cv,userInfo.experiences.companyIndustry,userInfo.experiences.jobLocation,userInfo.educations.country,userInfo.specialities,userInfo.skills,userInfo.languages`
+        `/users/${id}?populate=userInfo,userInfo.photo,company,company.country,userInfo.residenceCountry,userInfo.nationality,userInfo.educations,userInfo.experiences,userInfo.cv,userInfo.experiences.companyIndustry,userInfo.experiences.jobLocation,userInfo.educations.country,userInfo.specialities,userInfo.skills,userInfo.languages`
       );
       setIsCompany(!!realUser.company);
 

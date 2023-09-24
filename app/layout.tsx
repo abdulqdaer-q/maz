@@ -19,7 +19,6 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => (
               <Next13ProgressBar height="4px" color="#0A2FFF" options={{ showSpinner: true }} showOnShallow />
               <Navbar />  
 
-
               {children}
             </StyledComponentsRegistry>
         </AuthProvider>
