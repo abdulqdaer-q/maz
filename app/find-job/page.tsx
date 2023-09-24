@@ -4,7 +4,7 @@ import ApplyJob from "@/components/ApplyJob";
 import Filter from "@/components/Filter";
 import JobCard from "@/components/JobCa";
 import useJobs from "../hooks/useJobs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CloudFilled } from "@ant-design/icons";
 import { Job } from "@/types/Job";
 import { axios } from "@/utils/axios";
@@ -15,9 +15,19 @@ import { Input } from "antd";
 const Page = () => {
   const [apply, setApply] = useState<boolean>(false);
   const [idJob, setIdJob] = useState<number>(1);
+  const [formData, setFormData] = useState({
+    country: '',
+    industry: '',
+    gender: '',
+    type: '',
+    minSalary: 0,
+    maxSalary: 0,
+    minAge: 0,
+    maxAge: 0,
+  });
+  const [p, setP] = useState();
 
-
-  const jobs = useJobs();
+  const jobs = useJobs(undefined, p);
   const applyJob: Job = useJobs(idJob)
 
   const handleOpenApply = (id: number) => {
@@ -26,12 +36,27 @@ const Page = () => {
     console.log(id);
     
   }
-  
+  function generateAPIUrl(country, industry, gender, type, minAge, maxAge, maxSalary, minSalary) {
+    let params = ""
+    if (country) params += `filters[country][id][$eq]=${country}&`
+    if (industry) params += `filters[industries][id][$eq]=${industry}&`
+    if (gender) params += `filters[genderPerfrence][$eq]=${gender}&`
+    if (type) params += `filters[employmentType][$eq]=${type}&`
+
+    if (minAge) params += `filters[minimumAge][$gte]=${minAge}&`
+    if (maxAge) params += `filters[maximumAge][$lte]=${maxAge}&`
+    if (maxSalary) params += `filters[maximumSalary][$lte]=${maxSalary}&`
+    if (minSalary) params += `filters[minimumSalary][$gte]=${minSalary}&`
+    return params;
+  }
+  useEffect(() => {
+    const api = generateAPIUrl(formData.country, formData.industry, formData.gender, formData.type, formData.minAge, formData.maxAge, formData.maxSalary, formData.minSalary)
+    setP(api);
+  }, [formData]);
   return (
-    <div className="flex  m-28   justify-between">
-      
+    <div className="flex m-28 justify-between">
       <div className="w-1/4">
-        <Filter />
+        <Filter formData={formData} setFormData={setFormData} />
       </div>
       <div className={`${apply ? 'w-1/3' : 'w-2/3'}`}>
         {jobs?.map((job) => {

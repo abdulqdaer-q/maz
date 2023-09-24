@@ -3,7 +3,7 @@ import { Job, Jobs } from "@/types/Job";
 import { axios } from "@/utils/axios";
 import React, { useEffect, useState } from "react";
 
-export default (id?: any) => {
+export default (id?: any, filters?: string) => {
     const [jobs, setJobs] = useState<any>();
 
     useEffect(() => {
@@ -14,7 +14,7 @@ export default (id?: any) => {
                     data
                 );
             } else {
-                const { data } = await axios.get<Jobs>(`/jobs?populate[industries][fields][0]=title&populate[country][fields][0]=name&populate[company][fields][0]=companyName&fields[0]=title&fields[1]=minimumSalary&fields[2]=maximumSalary&fields[3]=numberOfVacancies&fields[4]=employmentType&fields[5]=isWorkFromHome&fields[6]=jobDescription&fields[7]=desiredSkills&fields[8]=genderPerfrence&fields[9]=minimumAge&fields[10]=maximumAge&fields[11]=minimumYearsOfExperience`);
+                const { data } = await axios.get<Jobs>(`/jobs?${filters}populate[industries][fields][0]=title&populate[country][fields][0]=name&populate[company][fields][0]=companyName&fields[0]=title&fields[1]=minimumSalary&fields[2]=maximumSalary&fields[3]=numberOfVacancies&fields[4]=employmentType&fields[5]=isWorkFromHome&fields[6]=jobDescription&fields[7]=desiredSkills&fields[8]=genderPerfrence&fields[9]=minimumAge&fields[10]=maximumAge&fields[11]=minimumYearsOfExperience `);
                 setJobs(
                     data?.map((e) => ({
                         title: e.title,
@@ -38,6 +38,6 @@ export default (id?: any) => {
             }
         };
         fetchJobs();
-    }, [id]);
+    }, [id, filters]);
     return jobs;
 };
