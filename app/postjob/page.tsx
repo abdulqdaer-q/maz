@@ -1,39 +1,28 @@
 "use client";
 import FillInformationWrapper, {
-  FillInformationProps,
+  FillInformationProps
 } from "@/components/wrappers/FillInformationWrapper";
-import { useAuthContext } from "@/contexts/AuthContext";
-import { customRequest, onChange } from "@/lib/customRequest";
-import { mediaToList } from "@/lib/mediaToForm";
-import { Education } from "@/types/Education";
+import { EmploymentType } from "@/types/Job";
+import { Gender } from "@/types/User";
 import { axios } from "@/utils/axios";
-import { CloudArrowDownIcon } from "@heroicons/react/24/outline";
 import {
-  Col,
-  DatePicker,
-  Form,
+  Col, Form,
   Input,
-  InputNumber,
-  Radio,
+  InputNumber, message, Radio,
   Select,
-  Switch,
-  Upload,
-  message,
+  Switch
 } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import dayjs from "dayjs";
+import { useState } from "react";
 import useCountries from "../hooks/useCountries";
 import useIndustries from "../hooks/useIndustries";
-import { EmploymentType } from "@/types/Job";
-import { Gender } from "@/types/User";
 
 type Props = Partial<FillInformationProps> & {
-  onAfterSubmit: () => void;
+  
   id?: number;
 };
-const Index = ({ onAfterSubmit, id, ...rest }: Props) => {
+const Index = ({  id, ...rest }: Props) => {
 
   const router = useRouter();
 
@@ -85,6 +74,7 @@ const Index = ({ onAfterSubmit, id, ...rest }: Props) => {
 
     const data = {
       ...values,
+      publishedAt: null
 
     };
     if (id) {
@@ -100,8 +90,7 @@ const Index = ({ onAfterSubmit, id, ...rest }: Props) => {
 
     });
     router.push("../find-job")
-    onAfterSubmit();
-    console.log(...values)
+
   };
 
 
@@ -148,7 +137,7 @@ const Index = ({ onAfterSubmit, id, ...rest }: Props) => {
           name="industries"
           rules={[{ required: true, message: "Job Industry is required" }]}
         >
-          <Select size="large" options={industries} placeholder="Choose Industry" />
+          <Select mode='multiple'  size="large" options={industries} placeholder="Choose Industry" />
         </Form.Item>
       </Col>
       <Col span={11} className="mr-12">
@@ -180,7 +169,7 @@ const Index = ({ onAfterSubmit, id, ...rest }: Props) => {
           rules={[{ required: true, message: "Nationality is required" }]}
 
         >
-          <Select size="large" options={countries} placeholder="Choose Country" />
+          <Select mode='multiple' size="large" options={countries} placeholder="Choose Country" />
         </Form.Item>
       </Col>
 
@@ -195,7 +184,7 @@ const Index = ({ onAfterSubmit, id, ...rest }: Props) => {
             },
           ]}
         >
-          <InputNumber size="large" className="!w-full" />
+          <InputNumber defaultValue={1} size="large" className="!w-full" />
         </Form.Item>
       </Col>
       <Col span={7} className="mr-8">

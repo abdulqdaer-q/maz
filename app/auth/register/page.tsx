@@ -41,14 +41,14 @@ const MyForm = () => {
     await axios.post("/user-infos", { data: userInfoBody });
     setToken(data.jwt);
     setFreload(e => !e)
-    setForceReload(true);
+    setForceReload(e => !e);
     message.open({
       type: "success",
       content: `Welcome  ${values.firstName}!`,
       key: submitKey,
     });
 
-    router.push("/profile/complete-profile/personal-information");
+    router.replace("/profile/complete-profile/personal-information");
   };
 
   const uploadProps: UploadProps = {

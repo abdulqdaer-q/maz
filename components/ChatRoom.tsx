@@ -83,9 +83,6 @@ const ChatRoom: React.FC = () => {
       });
       return uniqueArray;
     })
-    if (ref.current) {
-      ref.current.scrollTop = ref.current.scrollHeight;
-    }
   }, [chats, activeChat, user])
   const handleChatSelect = async (
     chat: number,
@@ -131,7 +128,7 @@ const ChatRoom: React.FC = () => {
         <div className=" h-[790px] overflow-y-auto">
           {messages.map((messageObj: any, index: any) => (
             <Message
-              ref={index === messages.length - 1 ? ref : null}
+              isLast={index === messages.length - 1}
               key={index}
               message={messageObj.message}
               sender={messageObj.createdAt}

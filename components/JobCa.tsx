@@ -37,7 +37,7 @@ function JobCard({
             <p className=" text-gray-900"><DollarOutlined className="mr-2" /> ${minsalary} - ${maxsalary}</p>
             <div className="flex justify-between items-center py-5">
                 <p className=" text-gray-400 text-sm">{time}</p>
-                <Button type="primary" className="  font-bold text-sm" onClick={onApply}>Apply</Button>
+                <Button type="primary" className="  font-bold text-sm" onClick={onApply}>Details</Button>
             </div>
 
         </div>

@@ -15,7 +15,12 @@ const LoginPage = () => {
   const router = useRouter();
   const handleFormSubmit = async (subData: any) => {
     const { email, password } = subData;
-  
+    message.open({
+      type: "loading",
+      content: `Attempting to Sign You In!`,
+      key: submitKey,
+    });
+
     const { data } = await axios.post("/auth/local", {
       identifier: email,
       password,

@@ -30,7 +30,8 @@ export default (id?: any) => {
                         minimumAge: e.minimumAge,
                         maximumAge: e.maximumAge,
                         minimumYearsOfExperience: e.minimumYearsOfExperience,
-                        company: e.company
+                        company: e.company,
+                        id: e.id
 
                     }))
                 );

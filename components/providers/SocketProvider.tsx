@@ -28,7 +28,7 @@ const SocketProvider = ({ children }: Props) => {
   };
   const handleMessageReceive = (details: {chat: number, from: number, message: string}) => {
     
-    setChats((chs) => {
+    setChats((chs: any) => {
       if (!chs[details.chat]) {
         chs[details.chat] = []
       }
@@ -60,7 +60,7 @@ const SocketProvider = ({ children }: Props) => {
   }, [reload]);
 
   if (isConnecting) {
-    return <h1>Signing in</h1>
+    return <div className="hidden">{children}</div>
   }
   
   return (

@@ -32,8 +32,8 @@ function Navbar() {
   ];
   if (user) {
     items.push(
-      { key: 3, label: "Post Job", onClick: () => handleRoute("/postjob") }
-      //{ key: 4, label: "Home", onClick: () => handleRoute("/") }
+      { key: 3, label: "Post Job", onClick: () => handleRoute("/postjob") },
+      { key: 4, label: "Chat", onClick: () => handleRoute("/chat") }
     );
   }
   return (
@@ -63,12 +63,7 @@ function Navbar() {
               <>
                 <Link href="/profile">
                   <Avatar
-                    src={
-                      user?.userInfo?.photo
-                        ? getPhotoLink(user.userInfo.photo.url)
-                        : BASE_SERVEFR_URL +
-                        "/uploads/user_318_159711_35568c738c.avif"
-                    }
+                    src={ getPhotoLink(user?.userInfo?.photo?.url) }
                     size="large"
                     icon={<UserOutlined />}
                     className="text-gray-600"

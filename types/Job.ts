@@ -13,6 +13,7 @@ export enum EmploymentType {
 
 export interface Job {
   title: string;
+  id: number;
   industries: Industry;
   country: Country;
   minimumSalary: number;

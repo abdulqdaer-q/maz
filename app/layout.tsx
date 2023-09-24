@@ -1,3 +1,4 @@
+"use client"
 import Navbar from "@/components/Navbar";
 import AuthProvider from "@/components/providers/AuthProvider";
 import SocketProvider from "@/components/providers/SocketProvider";
@@ -6,20 +7,23 @@ import { ConfigProvider } from "antd";
 import React from "react";
 import StyledComponentsRegistry from "../lib/AntdRegistry";
 import "./globals.css";
+import { Next13ProgressBar } from 'next13-progressbar';
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => (
   <html lang="en">
     <body>
       <ConfigProvider theme={theme}>
-        <AuthProvider>
           <SocketProvider>
+        <AuthProvider>
             <StyledComponentsRegistry>
-              <Navbar />
+              <Next13ProgressBar height="4px" color="#0A2FFF" options={{ showSpinner: true }} showOnShallow />
+              <Navbar />  
+
 
               {children}
             </StyledComponentsRegistry>
-          </SocketProvider>
         </AuthProvider>
+          </SocketProvider>
       </ConfigProvider>
     </body>
   </html>

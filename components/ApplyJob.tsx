@@ -1,8 +1,12 @@
+import { useAuthContext } from '@/contexts/AuthContext';
+import { axios } from '@/utils/axios';
 import { CloseOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
-import React from 'react'
+import { Button, Input, Popover } from 'antd';
+import TextArea from 'antd/es/input/TextArea';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react'
 type props = {
-    id: string;
+    id: number;
     title: string;
     companyName: string;
     location: string;
@@ -23,7 +27,7 @@ type props = {
     setIsOpen: any
 };
 const ApplyJob = ({
-
+    id,
     title,
     companyName,
     location,
@@ -43,15 +47,44 @@ const ApplyJob = ({
     isOpen,
     setIsOpen
 }: props) => {
+    const [text, setText] = useState('');
+    const [notiOpen, setNotiOpen] = useState(false);
+    const {user} = useAuthContext();
+    const router = useRouter();
     return (
-        <div className={`w-full  h-full border-t-4 border-primary rounded-md  ${isOpen ? `` : `hidden`}`} >
+        <div className={`w-full  h-full border-t-4 border-primary rounded-md`} >
             <CloseOutlined className='  ml-96 my-5' onClick={() => setIsOpen(false)} />
             <div className="w-full p-5 ">
                 <h1 className="font-semibold text-xl mb-3">{title}</h1>
                 <p className=" font-semibold  text-sm  mb-3">{companyName}  <span className=" text-gray-400  font-light"> . {location}</span></p>
                 <div className="flex justify-between items-center py-5">
                     <p className=" text-gray-400 text-sm">{time}</p>
-                    <Button type="primary" className="  font-bold text-sm" onClick={onApply}>Apply</Button>
+                    <Popover title="Do you want to add any information ?" trigger="click" onOpenChange={open => setNotiOpen(open)} open={notiOpen} content={() => (
+                        <div className='flex flex-col gap-5'>
+                        <TextArea rows={5} onChange={(e) => {setText(e.target.value)}} />
+                        <Button type='primary' onClick={async () => {
+                            await axios.post('/applications', {
+                                data: {
+                                    job: id,
+                                    userInfo: user?.userInfo?.id,
+                                    additionalInfo: text
+                                }
+                            })
+                        }} >
+                            Ok
+                        </Button>
+                        </div>
+
+                    )}>
+                        <Button type="primary" className="  font-bold text-sm" onClick={() => {
+                            if (user?.userInfo?.id) {
+                                setNotiOpen(true);
+                            }
+                            else {
+                                router.push('/auth/login')
+                            }
+                        }}>Apply</Button>
+                    </Popover>
                 </div>
             </div>
             <div className='  h-96 overflow-y-scroll  overflow-x-clip  break-before-all p-5'>

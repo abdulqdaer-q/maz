@@ -1,19 +1,32 @@
+import { axios } from "@/utils/axios";
 import {
   BriefcaseIcon,
-  ChatBubbleBottomCenterTextIcon,
-  ComputerDesktopIcon,
-  HeartIcon,
-  MapPinIcon,
-  PaintBrushIcon,
-  PencilIcon,
-  ScaleIcon,
+  ChatBubbleBottomCenterTextIcon, MapPinIcon
 } from "@heroicons/react/24/outline";
+import { Card, Col, Row } from "antd";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 function PromotionFeed() {
+  const [stats, setStats] = useState<any>({});
+  useEffect(() => {
+    const fn = async () => {
+      const _stats:any = {};
+      const {total} = await axios.get('/user-infos?pagination[limit]=1');
+      _stats['users'] = total;
+      const {total: totalCompanies} = await axios.get('/companies?pagination[limit]=1');
+      _stats['companies']=totalCompanies;
+      const {total: totalJobs} = await axios.get('/jobs?pagination[limit]=1');
+      _stats['jobs']=totalJobs;
+
+      setStats(_stats);
+    };
+    fn();
+  }, []);
   return (
     <div>
+      
       <section className="flex border border-b-gray-300 pb-10">
         <div className="flex flex-col justify-center ml-16 mt-20">
           <h2 className="text-blue-500 text-4xl">COWORK</h2>
@@ -35,7 +48,38 @@ function PromotionFeed() {
         </div>
         <Image src="/logo.png" alt="logo" height={400} width={400} />
       </section>
+      <section className="bg-blue-200 pt-12">
+        <h1 className="text-4xl   text-gray-700 text-center">Cowork in Numbers</h1>
+        <h1 className="text-lg mt-6 text-gray-700 text-center px-80">
+          Find The Best Talent For Your Full-Time, Part-Time, Contract,
+          Internship Or Freelance Jobs In Any Location
+        </h1>
 
+        <div className="mx-auto mt-5 container py-5">
+      
+      <Row gutter={16} className='my-5'>
+        <Col span={8}>
+          <Card>
+            <h2>Total Users</h2>
+            <p>Over {stats?.['users']} registered users</p>
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card>
+            <h2>Total Companies</h2>
+            <p>We have {stats?.['companies']} Compnies Registered With us </p>
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card>
+            <h2>Job Listings</h2>
+            <p>More than {stats?.['jobs']}  job listings</p>
+          </Card>
+        </Col>
+      </Row>
+      {/* Add more statistics here using Row, Col, and Card components */}
+    </div>
+      </section>
       <section>
         <h1 className="text-4xl  mt-12 text-gray-700 text-center">
           Why COWORK?
@@ -154,57 +198,6 @@ function PromotionFeed() {
         </div>
       </section>
 
-      <section className="bg-purple-200 pt-10">
-        <h1 className="text-4xl text-gray-700 text-center -ml-8">
-          Find And Hire Professionals Across All Skills
-        </h1>
-
-        <div className="grid grid-cols-2 grid-rows-3 p-14">
-          <div className="flex bg-blue-200 space-x-4 p-2 border border-blue-300 rounded-md mx-2 my-3">
-            <ComputerDesktopIcon className="bg-white rounded-full h-20 w-20 p-4 text-blue-200" />
-            <div className="flex flex-col space-y-2 justify-center items-start">
-              <h1 className="text-xl font-semibold">Web, Mobile & IT</h1>
-              <p className="text-xs">Java, Android, Python, React, Node.js</p>
-            </div>
-          </div>
-
-          <div className="flex bg-purple-300 space-x-4 p-2 border border-purple-400 rounded-md mx-2 my-3">
-            <BriefcaseIcon className="bg-white rounded-full h-20 w-20 p-4 text-purple-300" />
-            <div className="flex flex-col space-y-2 justify-center items-start">
-              <h1 className="text-xl font-semibold">Buisness & Consulting</h1>
-              <p className="text-xs">Project Manager, Buisness Analysis</p>
-            </div>
-          </div>
-          <div className="flex bg-purple-400 space-x-4 p-2 border border-purple-500 rounded-md mx-2 my-3">
-            <PaintBrushIcon className="bg-white rounded-full h-20 w-20 p-4 text-purple-400" />
-            <div className="flex flex-col space-y-2 justify-center items-start">
-              <h1 className="text-xl font-semibold">Design & Creative</h1>
-              <p className="text-xs">Web Design, Graphic Design,UI/UX Design</p>
-            </div>
-          </div>
-          <div className="flex bg-blue-200 space-x-4 p-2 border border-blue-300 rounded-md mx-2 my-3">
-            <HeartIcon className="bg-white rounded-full h-20 w-20 p-4 text-blue-200" />
-            <div className="flex flex-col space-y-2 justify-center items-start">
-              <h1 className="text-xl font-semibold">Medical & Healthcare</h1>
-              <p className="text-xs">Doctor, Nursing</p>
-            </div>
-          </div>
-          <div className="flex bg-purple-300 space-x-4 p-2 border border-purple-400 rounded-md mx-2 my-3">
-            <ScaleIcon className="bg-white rounded-full h-20 w-20 p-4 text-purple-300" />
-            <div className="flex flex-col space-y-2 justify-center items-start">
-              <h1 className="text-xl font-semibold">Legal & Finance</h1>
-              <p className="text-xs">Accounting, Bookkeeping</p>
-            </div>
-          </div>
-          <div className="flex bg-purple-400 space-x-4 p-2 border border-purple-500 rounded-md mx-2 my-3">
-            <PencilIcon className="bg-white rounded-full h-20 w-20 p-4 text-purple-400" />
-            <div className="flex flex-col space-y-2 justify-center items-start">
-              <h1 className="text-xl font-semibold">Writing & Translation</h1>
-              <p className="text-xs">Web Design, Graphic Design,UI/UX Design</p>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

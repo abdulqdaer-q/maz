@@ -7,6 +7,9 @@ import useJobs from "../hooks/useJobs";
 import { useState } from "react";
 import { CloudFilled } from "@ant-design/icons";
 import { Job } from "@/types/Job";
+import { axios } from "@/utils/axios";
+import Modal from "antd/es/modal/Modal";
+import { Input } from "antd";
 
 
 const Page = () => {
@@ -14,27 +17,28 @@ const Page = () => {
   const [idJob, setIdJob] = useState<number>(1);
 
 
-
   const jobs = useJobs();
   const applyJob: Job = useJobs(idJob)
-  console.log(applyJob, "dsd")
-  console.log(jobs)
+
   const handleOpenApply = (id: number) => {
     setApply(true)
-    console.log(id)
     setIdJob(id)
+    console.log(id);
+    
   }
-
+  
   return (
     <div className="flex  m-28   justify-between">
+      
       <div className="w-1/4">
         <Filter />
       </div>
       <div className={`${apply ? 'w-1/3' : 'w-2/3'}`}>
-        {jobs?.map((job, id) => {
+        {jobs?.map((job) => {
           return (
             <JobCard
-              id={id}
+              id={job.id}
+              key={job.id}
               title={job.title}
               companyName={job.company?.companyName}
               location={job.country.name}
@@ -42,7 +46,7 @@ const Page = () => {
               minsalary={job.minimumSalary}
               time={`${Math.floor((Math.random() * 10) + 1)}days`}
               description={job.jobDescription}
-              onApply={() => { handleOpenApply(id + 1) }}
+              onApply={() => { handleOpenApply(job.id) }}
             />
           )
         })}
@@ -68,28 +72,28 @@ const Page = () => {
         /> */}
       </div>
 
-      <div className={`${!apply ? 'w-0' : 'w-1/4'}`}>
+     {apply && <div className={`${!apply ? 'w-0' : 'w-1/4'}`}>
         <ApplyJob
-
+          id={applyJob?.id}
           title={applyJob?.title}
           companyName={applyJob?.company?.companyName}
-          location={applyJob?.country.name}
+          location={applyJob?.country?.name}
           maxsalary={applyJob?.maximumSalary}
-          minsalary={applyJob?.maximumSalary}
+          minsalary={applyJob?.minimumSalary}
           time={`${Math.floor((Math.random() * 10) + 1)}days`}
           description={applyJob?.jobDescription}
-          industry={applyJob?.industries.title}
+          industry={applyJob?.industries?.title}
           employmentType={applyJob?.employmentType}
           numberOfVacancies={applyJob?.numberOfVacancies}
           yearsOfExperience={applyJob?.minimumYearsOfExperience}
-          nationality={applyJob?.country.name}
+          nationality={applyJob?.country?.name}
           maxAge={applyJob?.maximumAge}
           minAge={applyJob?.minimumAge}
-          onApply={handleOpenApply}
+          onApply={()=> handleApply(applyJob.id)}
           isOpen={apply}
           setIsOpen={setApply}
         />
-      </div>
+      </div>}
     </div>
   );
 };

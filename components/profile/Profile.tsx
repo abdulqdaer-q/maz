@@ -7,8 +7,9 @@ import { Speciality } from "@/types/Specaility";
 import { User } from "@/types/User";
 import { Views } from "@/types/View";
 import { axios } from "@/utils/axios";
-import { DeleteFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteFilled, EditOutlined, PlusOutlined, UserOutlined } from "@ant-design/icons";
 import {
+  Avatar,
   Button,
   Card,
   Col,
@@ -588,9 +589,10 @@ const MainInfoCard = ({
   <Card className={className}>
     <Row gutter={20}>
       <Col span={6}>
-        <Image
-          src={getPhotoLink(user.userInfo!.photo.url)}
-          className="!w-28 !h-28 rounded-full"
+        <Avatar
+          src={getPhotoLink(user?.userInfo?.photo?.url||'')}
+          icon={<UserOutlined />}
+          size={128}
           alt="avatar"
         />
       </Col>
@@ -602,7 +604,7 @@ const MainInfoCard = ({
           {[
             {
               label: "Location",
-              value: user?.userInfo?.residenceCountry.name,
+              value: user?.userInfo?.residenceCountry?.name,
             },
             {
               label: "Education",

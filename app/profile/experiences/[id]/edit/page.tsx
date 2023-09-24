@@ -17,6 +17,10 @@ export default () => {
       onAfterSubmit={handleAfterSubmit}
       user={user!}
       id={+params.id}
-    />
+      startOverText="Cancel"
+      startOverHref="/profile"
+      hideSkip
+      submitText="Save"
+      />
   );
 };

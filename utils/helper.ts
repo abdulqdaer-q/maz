@@ -1,5 +1,4 @@
 "use client";
-import { useSocketContext } from "@/contexts/SocketContext";
 import { AUTH_TOKEN, BASE_SERVEFR_URL } from "./constant";
 
 export const getToken = () => {
