@@ -3,7 +3,7 @@ import SearchJobBar from "@/components/SearchJobBar";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { getPhotoLink } from "@/lib/getPhotoLink";
 import { Degree } from "@/types/Education";
-import { Speciality } from "@/types/Specaility";
+import { LanguageLevel, Speciality } from "@/types/Specaility";
 import { User } from "@/types/User";
 import { Views } from "@/types/View";
 import { axios } from "@/utils/axios";
@@ -47,9 +47,10 @@ type Props = {
 const Profile = ({ user, showEdit = false, setReload }: Props) => {
   const [percentage, setPercentage] = useState(20);
   const [open, setOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const [skillsOpen, setSkillsOpen] = useState(false);
   const [views, setViews] = useState<Views>([]);
-  const [selectedSpeciality, setSelectedSpeciality] = useState<Speciality>();
+  const [selectedSpeciality, setSelectedSpeciality] = useState<Speciality|LanguageLevel>();
   const getLatestEducation = () => {
     const degrees: { [key: string]: number } = Object.values(Degree).reduce(
       (bef, e, idx) => ({
@@ -112,16 +113,19 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
   return (
     <>
       <SpecialityFormModal
-        open={open}
+        open={open || langOpen}
         initialValues={selectedSpeciality}
+        isLanguage={langOpen}
         id={selectedSpeciality?.id}
         onSuccess={() => {
           setReload((p) => !p);
           setOpen(false);
+          setLangOpen(false);
         }}
         key={selectedSpeciality?.id}
         onCancel={() => {
           setOpen(false);
+          setLangOpen(false);
           setSelectedSpeciality(undefined);
         }}
       />
@@ -288,7 +292,7 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                   ))}
                 </Row>
               </Card>}
-              {(showEdit || !!user.userInfo?.languages?.length) && <Card className="mt-5">
+              {(showEdit || !!user.userInfo?.languages?.length) && <Card className="mt-5  mb-10">
                 <div className="flex justify-between">
                   <Title level={2}>Languages</Title>
                   {showEdit && <div>
@@ -296,7 +300,7 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                       icon={<PlusOutlined />}
                       type="link"
                       onClick={() => {
-                        setOpen(true);
+                        setLangOpen(true);
                       }}
                     />
                   </div>}
@@ -307,17 +311,17 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                       <KeyValueColumn label={e.language} value={e.level} />
                       {showEdit && <div className="flex">
                         <Button type="link" onClick={() => {
-                          //setSelectedSpeciality(e);
-                          setOpen(true);
+                          setSelectedSpeciality(e);
+                          setLangOpen(true);
                         }} icon={<EditOutlined />} />
 
                         <Popconfirm
-                          title="Delete the Speciality"
-                          description="Are you sure to delete this Speciality?"
+                          title="Delete the language"
+                          description="Are you sure to delete this language?"
                           okText="Yes"
                           cancelText="No"
                           onConfirm={async () => {
-                            await axios.delete("/specialities/" + e.id);
+                            await axios.delete("/language-levels/" + e.id);
                             message.success("deleted successfully");
                             setReload((p) => !p);
                           }}

@@ -45,7 +45,13 @@ export interface UserInfo {
   languages?: Languages;
 }
 
-export interface Company { }
+export interface Company {
+  companyName: string;
+  companySize: string;
+  id: number;
+  phoneNumber: string;
+  country: Country
+ }
 
 export interface User {
   id: number;

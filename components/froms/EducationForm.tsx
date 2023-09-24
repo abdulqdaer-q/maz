@@ -21,6 +21,7 @@ import TextArea from "antd/es/input/TextArea";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
+import useCountries from "@/app/hooks/useCountries";
 
 type Props = Partial<FillInformationProps> & {
   onAfterSubmit: () => void;
@@ -30,9 +31,12 @@ const Index =({onAfterSubmit, id, ...rest }: Props) => {
   const { user } = useAuthContext();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const countries = useCountries()
   const [education, setEducation] = useState<any>();
   const handleFormSubmit = async (values: any) => {
-    const certificates = values.certificate?.fileList.map((e: any) => {
+    
+    console.log({x:values.certificate});
+    const certificates = values.certificate?.id || values.certificate?.fileList.map((e: any) => {
       return e.response[0].id;
     });
     const data = {
@@ -40,6 +44,7 @@ const Index =({onAfterSubmit, id, ...rest }: Props) => {
       graduationDate: values.graduationDate.format("YYYY-MM-DD"),
       userInfo: user?.userInfo?.id,
       certificate: certificates,
+      
     };
     if (id) {
       await axios.put("/educations/" + id, { data });
@@ -53,12 +58,12 @@ const Index =({onAfterSubmit, id, ...rest }: Props) => {
       const { data } = await axios.get<Education>(
         `/educations/${id}?populate[country][fields][0]=id&populate[certificate][fields][0]=id&populate[certificate][fields][1]=url&populate[certificate][fields][2]=name`
       );
-      console.log(data);
+      console.log({data});
       
       setEducation({
         ...data,
         graduationDate: dayjs(data.graduationDate),
-        country: data.country!.id,
+        country: data.country?.id,
       });
       setLoading(false);
     };
@@ -92,6 +97,23 @@ const Index =({onAfterSubmit, id, ...rest }: Props) => {
               value: degree,
             }))}
             placeholder="Select Education level"
+          />
+        </Form.Item>
+      </Col>
+      <Col span={24}>
+        <Form.Item
+          label="Country"
+          name="country"
+          rules={[
+            {
+              required: true,
+              message: "Please select your education level",
+            },
+          ]}
+        >
+          <Select
+            options={countries}
+            placeholder="Select Country"
           />
         </Form.Item>
       </Col>

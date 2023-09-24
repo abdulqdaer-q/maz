@@ -20,9 +20,10 @@ const SocketProvider = ({ children }: Props) => {
   const [chats, setChats] = useState<any>({});
   const hadnleSocketConnection = ( ) => {
     setConnecting(false);
+    setOnlineUsers([])
   }
   const handleOnlineUsersChange = (users: string[]) => {
-    setOnlineUsers(users)
+    setOnlineUsers([...users])
   }
   const sendMessage = (details: {chat: number, from: number, message: string, createdAt: Date}) => {
     socket.emit('message', {body: details})
@@ -42,6 +43,9 @@ const SocketProvider = ({ children }: Props) => {
     const authToken = getToken();
     if (!authToken) {
       setConnecting(false);
+      if (socket.connected) {
+        socket.disconnect()
+      }
       return;
     };
     
