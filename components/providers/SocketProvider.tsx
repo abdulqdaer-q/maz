@@ -5,6 +5,7 @@ import { getToken } from "../../utils/helper";
 
 import { SocketContext } from "@/contexts/SocketContext";
 import { io } from "socket.io-client";
+import { BASE_SERVEFR_URL } from "@/utils/constant";
 
 type Props = {
   children?: React.ReactNode;
@@ -13,7 +14,7 @@ const SocketProvider = ({ children }: Props) => {
   const [reload, setForceReload] = useState(false);
   const [isConnecting, setConnecting] = useState(true);
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
-  const [socket, setSocket] = useState(io('http://localhost:1337', {
+  const [socket, setSocket] = useState(io(BASE_SERVEFR_URL, {
     autoConnect: false
   }));
   const [chats, setChats] = useState<any>({});

@@ -34,12 +34,10 @@ import {
 } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import Container from "../layout/container";
 import SkillsFormModal from "../modals/SkillsFormModal";
 import SpecialityFormModal from "../modals/SpecialityFormModal";
 
-const Container = ({ children }: PropsWithChildren) => (
-  <div className="w-1/2 pt-5 mx-auto">{children}</div>
-);
 
 type Props = {
   user: User;
@@ -592,7 +590,7 @@ const MainInfoCard = ({
         <Avatar
           src={getPhotoLink(user?.userInfo?.photo?.url||'')}
           icon={<UserOutlined />}
-          size={128}
+          size={80}
           alt="avatar"
         />
       </Col>

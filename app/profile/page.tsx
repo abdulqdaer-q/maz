@@ -16,10 +16,9 @@ const Page = () => {
     return <h1>Loading</h1>;
   }
   if (isCompany) {
-    router.push("/");
+    router.push("/company/profile");
     return;
   }
-  console.log({user});
   
   return <Profile setReload={setForceReload} user={user} showEdit />;
 };

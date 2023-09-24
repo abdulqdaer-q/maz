@@ -144,7 +144,7 @@ const Index =({onAfterSubmit, id, ...rest }: Props) => {
         <Form.Item
           label="Grade"
           name="grade"
-          rules={[{ min: 60 , max: 100, required: false}]}
+          rules={[{ min: 60 ,type:'number',  required: false, max: 100}]}
         >
           <InputNumber className="!w-full" />
         </Form.Item>
