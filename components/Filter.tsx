@@ -5,58 +5,98 @@ import { EmploymentType } from '@/types/Job';
 import { Gender } from '@/types/User';
 import { axios } from '@/utils/axios';
 import { FilterOutlined } from '@ant-design/icons';
-import { Checkbox, Collapse, CollapseProps } from 'antd'
-import React from 'react'
+import { Checkbox, Collapse, CollapseProps, InputNumber, Radio, Slider } from 'antd'
+import React, { useEffect, useState } from 'react'
 const text = `
   A dog is a type of domesticated animal.
   Known for its loyalty and faithfulness,
   it can be found as a welcome guest in many households across the world.
 `;
+type props = {
+    formData: {
 
-const Filter = () => {
+    }
+    setFormData: any
+};
+const Filter = ({
+    formData,
+    setFormData
+}: props) => {
     const countries = useCountries();
     const industries = useIndustries();
+    const handleChange = (name, value) => {
+        console.log(formData.country)
+        console.log({ name, value }, "ds")
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value
+        }));
+
+
+    };
+
     const items: CollapseProps['items'] = [
         {
             key: '1',
             label: 'Country',
-            children: <>
-                {countries?.map(country => <Checkbox onChange={() => console.log(country.value)}>{country.label}</Checkbox>)}
-            </>
-
-            ,
+            children:
+                <Radio.Group className='flex flex-col' name='country' onChange={(value) => handleChange(value.target.name, value.target.checked ? value.target.value : undefined)} value={formData.country}>
+                    {countries?.map(country => <Radio value={country.value} >{country.label}</Radio>)}
+                    <Radio value={""}  >{"All Countries "}</Radio>
+                </Radio.Group>
         },
         {
             key: '2',
             label: 'Industry',
-            children: <>
-                {industries?.map(industry => <Checkbox onChange={(value) => console.log(value)}>{industry.label}</Checkbox>)}
-            </>
+            children: <Radio.Group className='flex flex-col' name='industry' onChange={(value) => handleChange(value.target.name, value.target.checked ? value.target.value : undefined)} value={formData.industry}>
+                {industries?.map(industry => <Radio value={industry.value} >{industry.label}</Radio>)}
+                <Radio value={""}  >{"All Industries "}</Radio>
+            </Radio.Group>
             ,
         },
         {
             key: '3',
             label: 'Employment Type',
-            children: <>
+            children: <Radio.Group className='flex flex-col' name='type' onChange={(value) => handleChange(value.target.name, value.target.checked ? value.target.value : undefined)} value={formData.type}>
                 {Object.values(EmploymentType).map((type) => (
-                    <Checkbox onChange={(value) => console.log(value)}>{type}</Checkbox>
+                    <Radio value={type}  >{type}</Radio>
                 ))}
-            </>,
+                <Radio value={""} checked >{"All Employment Types "}</Radio>
+            </Radio.Group>,
         },
         {
             key: '4',
             label: 'Gender',
-            children: <>
+            children: <Radio.Group className='flex flex-col' name='gender' onChange={(value) => handleChange(value.target.name, value.target.checked ? value.target.value : undefined)} value={formData.gender}>
                 {Object.values(Gender).map((gen) => (
-                    <Checkbox onChange={(value) => console.log(value)}>{gen}</Checkbox>
+                    <Radio value={gen} >{gen}</Radio>
+
                 ))}
+                <Radio value={""} checked >{"All Genders "}</Radio>
+
+            </Radio.Group>,
+        },
+        {
+            key: '5',
+            label: 'Age',
+            children: <>
+                <span>Min </span> <InputNumber value={formData.minAge} onChange={(value) => handleChange("minAge", value)} name='minAge' />
+                <span>Max </span> <InputNumber value={formData.maxAge} onChange={(value) => handleChange("maxAge", value)} name='maxAge' />
             </>,
+        },
+        {
+            key: '6',
+            label: 'Salary',
+            children: <div className='flex justify-between items-center'>
+                <span>Min </span> <InputNumber value={formData.minSalary} onChange={(value) => handleChange("minSalary", value)} name='minSalary' />
+                <span>Max </span> <InputNumber value={formData.maxSalary} onChange={(value) => handleChange("maxSalary", value)} name='maxSalary' />
+            </div>,
         }
     ]
     return (
-        <div className='w-full  h-full border-t-4 border-primary rounded-md'>
+        <div className=' w-72  h-[700px] border-t-4 border-primary rounded-md fixed  overflow-y-scroll'>
             <h1 className=' m-2'><FilterOutlined className='mx-2' /> <span className=' text-xl first-letter:'>Filter</span></h1>
-            <Collapse defaultActiveKey={['1', '2', '3', '4']} bordered={false} items={items} />
+            <Collapse defaultActiveKey={['1', '2', '3', '4', '5', '6']} bordered={false} items={items} />
         </div>
     )
 }
