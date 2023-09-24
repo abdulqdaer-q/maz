@@ -8,17 +8,17 @@ import React, { useEffect, useState } from 'react';
 import Container from '../layout/container';
 import { KeyValueColumn } from './Profile';
 
-type Props = {user: User ,setReload: () => {}, }
-const CompanyProfile = ({user}: Props) => {
-    
+type Props = { user: User, setReload: () => {}, }
+const CompanyProfile = ({ user }: Props) => {
 
-    return (
-        <>
-      <div className="bg-gray-200 w-full">
+
+  return (
+    <>
+      <div className="bg-gray-200 w-full ">
         <Container>
-      <Row >
-        <Col className='mx-auto' span={15}>
-          <Card>
+          <Row >
+            <Col className='mx-auto my-4' span={15}>
+              <Card>
                 <Title level={3}>Contact Information</Title>
                 <Row className="items-center mt-5">
                   {[
@@ -47,13 +47,13 @@ const CompanyProfile = ({user}: Props) => {
                     <KeyValueColumn {...e} key={e.label} />
                   ))}
                 </Row>
-            </Card> 
-        </Col>
+              </Card>
+            </Col>
 
-      </Row>
+          </Row>
         </Container>
-        </div>
-        </>
-    )
+      </div>
+    </>
+  )
 }
 export default CompanyProfile

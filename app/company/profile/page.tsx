@@ -1,4 +1,5 @@
 "use client";
+import PostedJob from "@/components/PostedJob";
 import CompanyProfile from "@/components/profile/CompanyProfile";
 import Profile from "@/components/profile/Profile";
 import { useAuthContext } from "@/contexts/AuthContext";
@@ -17,10 +18,17 @@ const Page = () => {
     return <h1>Loading</h1>;
   }
   if (!isCompany) {
-  router.push("/profile");
+    router.push("/profile");
     return;
   }
-  
-  return <CompanyProfile  setReload={setForceReload} user={user} showEdit  />;
+
+
+  return (
+    <>
+      <CompanyProfile setReload={setForceReload} user={user} showEdit />;
+      <PostedJob />
+    </>
+  )
+
 };
 export default Page;

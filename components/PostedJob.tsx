@@ -99,7 +99,7 @@ const PostedJob = () => {
     ];
     return (
         <div>
-            <Tabs className=' ' defaultActiveKey="1" items={items} />;
+            <Tabs tabPosition={"left"} className=' m-auto  p-10 my-4' defaultActiveKey="1" items={items} />;
 
         </div>
     )
