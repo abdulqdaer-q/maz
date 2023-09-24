@@ -1,7 +1,7 @@
 import { useAuthContext } from '@/contexts/AuthContext';
 import { axios } from '@/utils/axios';
 import { CloseOutlined } from '@ant-design/icons';
-import { Button, Input, Popover } from 'antd';
+import { Button, Input, message, Popover } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
@@ -52,7 +52,7 @@ const ApplyJob = ({
     const {user} = useAuthContext();
     const router = useRouter();
     return (
-        <div className={`w-full  h-full border-t-4 border-primary rounded-md`} >
+        <div className={`w-[25rem]  h-[80vh] border-t-4 border-primary rounded-md fixed  overflow-y-scroll`} >
             <CloseOutlined className='  ml-96 my-5' onClick={() => setIsOpen(false)} />
             <div className="w-full p-5 ">
                 <h1 className="font-semibold text-xl mb-3">{title}</h1>
@@ -70,6 +70,9 @@ const ApplyJob = ({
                                     additionalInfo: text
                                 }
                             })
+                            message.success('Applied sucessfully')
+                            setIsOpen(false);
+                            setText('')
                         }} >
                             Ok
                         </Button>
@@ -87,7 +90,7 @@ const ApplyJob = ({
                     </Popover>
                 </div>
             </div>
-            <div className='  h-96 overflow-y-scroll  overflow-x-clip  break-before-all p-5'>
+            <div className='  h-96 overflow-y-scroll line-clamp-4 break-all break-before-all p-5'>
                 <div className='flex flex-col my-4 '>
                     <h1 className='   font-bold py-1'>Job Description</h1>
                     <p className='  text-sm text-gray-500 '>{description}</p>
@@ -101,7 +104,7 @@ const ApplyJob = ({
                     {location ? <p className='flex  justify-between text-gray-500 text-sm'><span className='  font-semibold  text-black' >Job Location</span>{location} </p> : ""}
                     {industry ? <p className='flex  justify-between text-gray-500 text-sm'><span className='  font-semibold  text-black'>Job Industry</span>{industry} </p> : ""}
                     {employmentType ? <p className='flex  justify-between text-gray-500 text-sm'><span className='  font-semibold  text-black'>Employment Type</span>{employmentType} </p> : ""}
-                    {minsalary || maxsalary ? <p className='flex  justify-between text-gray-500 text-sm'><span className='  font-semibold  text-black'>Monthly Salary Range</span> {`$ ${minsalary} - $ ${maxsalary}`} </p> : ""}
+                    {minsalary || maxsalary ? <p className='flex  justify-between text-gray-500 text-sm'><span className='  font-semibold  text-black'>Monthly Salary Range</span> {`S.P ${minsalary} - S.P ${maxsalary}`} </p> : ""}
                     {numberOfVacancies ? <p className='flex  justify-between text-gray-500 text-sm'><span className='  font-semibold  text-black'>Number of Vacancies</span>{numberOfVacancies} </p> : ""}
                 </div>
                 <div className='flex flex-col my-4 gap-3'>

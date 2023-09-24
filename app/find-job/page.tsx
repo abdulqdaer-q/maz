@@ -3,13 +3,9 @@
 import ApplyJob from "@/components/ApplyJob";
 import Filter from "@/components/Filter";
 import JobCard from "@/components/JobCa";
-import useJobs from "../hooks/useJobs";
-import { useEffect, useState } from "react";
-import { CloudFilled } from "@ant-design/icons";
 import { Job } from "@/types/Job";
-import { axios } from "@/utils/axios";
-import Modal from "antd/es/modal/Modal";
-import { Input } from "antd";
+import { useEffect, useState } from "react";
+import useJobs from "../hooks/useJobs";
 
 
 const Page = () => {
