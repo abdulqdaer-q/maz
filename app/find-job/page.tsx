@@ -12,6 +12,7 @@ const Page = () => {
   const [apply, setApply] = useState<boolean>(false);
   const [idJob, setIdJob] = useState<number>(1);
   const [formData, setFormData] = useState({
+
     country: '',
     industry: '',
     gender: '',
@@ -30,15 +31,14 @@ const Page = () => {
     setApply(true)
     setIdJob(id)
     console.log(id);
-    
+
   }
   function generateAPIUrl(country, industry, gender, type, minAge, maxAge, maxSalary, minSalary) {
-    let params = ""
+    let params = "";
     if (country) params += `filters[country][id][$eq]=${country}&`
     if (industry) params += `filters[industries][id][$eq]=${industry}&`
     if (gender) params += `filters[genderPerfrence][$eq]=${gender}&`
     if (type) params += `filters[employmentType][$eq]=${type}&`
-
     if (minAge) params += `filters[minimumAge][$gte]=${minAge}&`
     if (maxAge) params += `filters[maximumAge][$lte]=${maxAge}&`
     if (maxSalary) params += `filters[maximumSalary][$lte]=${maxSalary}&`
@@ -93,7 +93,7 @@ const Page = () => {
         /> */}
       </div>
 
-     {apply && <div className={`${!apply ? 'w-0' : 'w-1/4'}`}>
+      {apply && <div className={`${!apply ? 'w-0' : 'w-1/4'}`}>
         <ApplyJob
           id={applyJob?.id}
           title={applyJob?.title}
@@ -110,7 +110,7 @@ const Page = () => {
           nationality={applyJob?.country?.name}
           maxAge={applyJob?.maximumAge}
           minAge={applyJob?.minimumAge}
-          onApply={()=> handleApply(applyJob.id)}
+          onApply={() => handleApply(applyJob.id)}
           isOpen={apply}
           setIsOpen={setApply}
         />

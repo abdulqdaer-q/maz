@@ -15,7 +15,7 @@ const AuthProvider = ({ children }: Props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCompany, setIsCompany] = useState(false);
   const [forceReload, setForceReload] = useState(false);
-  
+
 
   const fetchLoggedInUser = async (token: string) => {
     try {
@@ -43,16 +43,16 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     const authToken = getToken();
     if (authToken) {
-      console.log({'i-ll-do-it-later': true});
-      
+      console.log({ 'i-ll-do-it-later': true });
+
       fetchLoggedInUser(authToken);
     }
     else {
       setUserData(undefined)
       setIsLoading(false);
     }
-  }, [ forceReload]);
-  
+  }, [forceReload]);
+
   return (
     <AuthContext.Provider
       value={{

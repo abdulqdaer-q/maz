@@ -2,11 +2,16 @@ import useCountries from "@/app/hooks/useCountries";
 import { CompassOutlined, SearchOutlined } from "@ant-design/icons";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Button, Col, Form, Input, Row, Select } from "antd";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 function SearchJobBar() {
   const countries = useCountries();
-  const handleFinish = (values: any) => {};
+  const handleFinish = (values: any) => {
+    const router = useRouter();
+    router.push(`find-job/`)
+
+  };
   return (
     <Form onFinish={handleFinish}>
       <Row gutter={5}>

@@ -245,7 +245,7 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                           okText="Yes"
                           cancelText="No"
                           onConfirm={async () => {
-                            await axios.delete("/specialities/" + e.id);
+                            await axios.delete("/jobs/" + id);
                             message.success("deleted successfully");
                             setReload((p) => !p);
                           }}
@@ -467,8 +467,8 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                                 new Date(e.startDate),
                                 "MMMM yyyy"
                               )} - ${e.endDate
-                                  ? format(new Date(e.endDate), "MMMM yyyy")
-                                  : "Now"
+                                ? format(new Date(e.endDate), "MMMM yyyy")
+                                : "Now"
                                 } (${formatDuration(
                                   intervalToDuration({
                                     start: new Date(e.startDate),
@@ -588,7 +588,7 @@ const MainInfoCard = ({
     <Row gutter={20}>
       <Col span={6}>
         <Avatar
-          src={getPhotoLink(user?.userInfo?.photo?.url||'')}
+          src={getPhotoLink(user?.userInfo?.photo?.url || '')}
           icon={<UserOutlined />}
           size={80}
           alt="avatar"

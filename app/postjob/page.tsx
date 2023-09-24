@@ -17,15 +17,17 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import useCountries from "../hooks/useCountries";
 import useIndustries from "../hooks/useIndustries";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 type Props = Partial<FillInformationProps> & {
-  
+
   id?: number;
 };
-const Index = ({  id, ...rest }: Props) => {
+const Index = ({ id, ...rest }: Props) => {
 
   const router = useRouter();
-
+  const { user, isLoading } = useAuthContext();
+  const company = user?.company
   const countries = useCountries();
   const industries = useIndustries();
   const [loading, setLoading] = useState(true);
@@ -74,7 +76,8 @@ const Index = ({  id, ...rest }: Props) => {
 
     const data = {
       ...values,
-      publishedAt: null
+      publishedAt: null,
+      company: company?.id
 
     };
     if (id) {
@@ -137,7 +140,7 @@ const Index = ({  id, ...rest }: Props) => {
           name="industries"
           rules={[{ required: true, message: "Job Industry is required" }]}
         >
-          <Select mode='multiple'  size="large" options={industries} placeholder="Choose Industry" />
+          <Select mode='multiple' size="large" options={industries} placeholder="Choose Industry" />
         </Form.Item>
       </Col>
       <Col span={11} className="mr-12">
