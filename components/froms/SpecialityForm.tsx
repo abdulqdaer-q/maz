@@ -1,5 +1,5 @@
 import { useAuthContext } from "@/contexts/AuthContext";
-import { Level } from "@/types/Specaility";
+import { Language, Level } from "@/types/Specaility";
 import { axios } from "@/utils/axios";
 import { Button, Col, Form, Input, message, Row, Select } from "antd";
 import { useForm } from "antd/es/form/Form";
@@ -11,16 +11,18 @@ export type SpecialityProps = {
   initialValues?: Store;
   onCancel?: () => void;
   onSuccess?: ()=> void;
+  isLanguage: boolean;
 };
 
-const SpecialityForm = ({ id, initialValues, onCancel, onSuccess }: SpecialityProps) => {
+const SpecialityForm = ({ id, initialValues, onCancel, onSuccess, isLanguage }: SpecialityProps) => {
   const {user} = useAuthContext();
+  const url = isLanguage ? "language-levels" : "specialities";
   const handleOnFinish = async (data: any) => {
     if (id) {
-      await axios.put("/specialities/" + id, { data });
+      await axios.put(`/${url}/` + id, { data });
       message.success('Edited Sucessfully');
     } else {
-      await axios.post("/specialities", { data:{ 
+      await axios.post(`/${url}`, { data:{ 
         ...data, userInfo: user?.userInfo?.id
       } });
       message.success('Added Sucessfully');
@@ -37,8 +39,11 @@ const SpecialityForm = ({ id, initialValues, onCancel, onSuccess }: SpecialityPr
     >
       <Row gutter={15}>
         <Col span={12}>
-          <Form.Item label="Speciality" name="name">
-            <Input />
+          <Form.Item label={isLanguage ?"Language" : "Speciality"} name={isLanguage ? 'language' : 'name'}>
+            {isLanguage ? <Select options={Object.values(Language).map(e => ({
+              label: e,
+              value: e
+            }))}  />: <Input />}
           </Form.Item>
         </Col>
         <Col span={12}>
