@@ -23,17 +23,17 @@ function Navbar() {
   const { onlineUsers } = useSocketContext();
   const [options, setOptions] = useState<Option[]>([]);
   const [search, setSearch] = useState('');
-  
-  useEffect(( ) => {
-      const fn = async () => {
-          const {data: users} = await axios.get<User[]>(`/users?populate=userInfo,company&filters[$or][0][userInfo][firstName][$containsi]=${search}&filters[$or][1][userInfo][lastName][$containsi]=${search}&filters[$or][2][company][companyName][$containsi]=${search}`);
 
-          setOptions(users.map(e => ({
-              label: e.userInfo ? (e.userInfo?.firstName + " " + e.userInfo?.lastName ) : e.company!.companyName,
-              value: e.id
-          })));
-      }
-      fn()
+  useEffect(() => {
+    const fn = async () => {
+      const { data: users } = await axios.get<User[]>(`/users?populate=userInfo,company&filters[$or][0][userInfo][firstName][$containsi]=${search}&filters[$or][1][userInfo][lastName][$containsi]=${search}&filters[$or][2][company][companyName][$containsi]=${search}`);
+
+      setOptions(users.map(e => ({
+        label: e.userInfo ? (e.userInfo?.firstName + " " + e.userInfo?.lastName) : e.company!.companyName,
+        value: e.id
+      })));
+    }
+    fn()
   }, [search]);
   const router = useRouter();
   const ref = useRef();
@@ -48,25 +48,30 @@ function Navbar() {
   const items: MenuItemType[] = [
     { key: 1, label: "Home", onClick: () => handleRoute("/") },
     { key: 2, label: "Find Jobs", onClick: () => handleRoute("/find-job") },
+
   ];
   if (user) {
     items.push(
-      { key: 3, label: "Post Job", onClick: () => handleRoute("/postjob") },
       { key: 4, label: "Chat", onClick: () => handleRoute("/chat") }
     );
   }
+  if (user?.company) {
+    items.push(
+      { key: 3, label: "Post Job", onClick: () => handleRoute("/postjob") },
+    );
+  }
   const handleSearch = (value: string) => {
-        setSearch(value);
-        //setOptions(value ? searchResult(value) : []);
-    };
-    
-    const onSelect = (value: string) => {
-      router.replace(`/profile/${value}`);
-      
-      setSearch('');
-      
-    };
-    
+    setSearch(value);
+    //setOptions(value ? searchResult(value) : []);
+  };
+
+  const onSelect = (value: string) => {
+    router.replace(`/profile/${value}`);
+
+    setSearch('');
+
+  };
+
   return (
     <Header
       style={{ backgroundColor: "#FFF" }}
@@ -92,7 +97,7 @@ function Navbar() {
           >
             {user && !isLoading ? (
               <>
-               <AutoComplete
+                <AutoComplete
                   popupMatchSelectWidth={252}
                   style={{ width: 300 }}
                   options={options}
@@ -100,13 +105,13 @@ function Navbar() {
                   onSearch={handleSearch}
                   size="large"
                   autoClearSearchValue
-                  
-        >
-            <Input.Search value={search} size="large" placeholder="search for users" enterButton />
-        </AutoComplete>
+
+                >
+                  <Input.Search value={search} size="large" placeholder="search for users" enterButton />
+                </AutoComplete>
                 <Link href="/profile">
                   <Avatar
-                    src={ getPhotoLink(user?.userInfo?.photo?.url) }
+                    src={getPhotoLink(user?.userInfo?.photo?.url)}
                     size="large"
                     icon={<UserOutlined />}
                     className="text-gray-600"
@@ -118,7 +123,7 @@ function Navbar() {
               </>
             ) : (
               <>
-             
+
                 <Link href="/auth/login">
                   <Button type="default">Login</Button>
                 </Link>

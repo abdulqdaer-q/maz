@@ -110,20 +110,21 @@ const ApplyJob = ({
                     setp((p) => !p);
                     console.log(p)
                 }}>Delete</Button>  </div> : ""}
-                {draft ? <div className=' flex gap-3'><Button className=' ' danger onClick={async () => {
-                    await axios.delete("/jobs/" + id);
-                    console.log(p)
-                    message.success("deleted successfully");
-                    setp((p) => !p);
-                    console.log(p)
-                }}>Delete</Button>
+                {draft ? <div className=' flex gap-3'>
                     <Button type='primary' className=' bg-green-400' onClick={async () => {
                         await axios.put("/jobs/" + id, { data: { publishedAt: new Date() } });
                         console.log(p)
                         message.success("Post successfully");
                         setp((p) => !p);
                         console.log(p)
-                    }}>Post</Button>  </div> : ""}
+                    }}>Post</Button>
+                    <Button className=' ' danger onClick={async () => {
+                        await axios.delete("/jobs/" + id);
+                        console.log(p)
+                        message.success("deleted successfully");
+                        setp((p) => !p);
+                        console.log(p)
+                    }}>Delete</Button> </div> : ""}
 
             </div>
             <div className="w-full p-5 ">

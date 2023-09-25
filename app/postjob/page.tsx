@@ -140,7 +140,7 @@ const Index = ({ id, ...rest }: Props) => {
           name="industries"
           rules={[{ required: true, message: "Job Industry is required" }]}
         >
-          <Select mode='multiple' showSearch optionFilterProp="label"  size="large" options={industries} placeholder="Choose Industry" />
+          <Select mode='multiple' showSearch optionFilterProp="label" size="large" options={industries} placeholder="Choose Industry" />
         </Form.Item>
       </Col>
       <Col span={11} className="mr-12">
@@ -172,7 +172,7 @@ const Index = ({ id, ...rest }: Props) => {
           rules={[{ required: true, message: "Nationality is required" }]}
 
         >
-          <Select mode='multiple' size="large"  showSearch optionFilterProp="label" options={countries} placeholder="Choose Country" />
+          <Select mode='multiple' size="large" showSearch optionFilterProp="label" options={countries} placeholder="Choose Country" />
         </Form.Item>
       </Col>
 
@@ -180,12 +180,7 @@ const Index = ({ id, ...rest }: Props) => {
         <Form.Item
           label="Number Of Vacancies"
           name="numberOfVacancies"
-          rules={[
-            {
-              required: true,
-              message: "Please enter Number Of Vacancies",
-            },
-          ]}
+
         >
           <InputNumber defaultValue={1} size="large" className="!w-full" />
         </Form.Item>
