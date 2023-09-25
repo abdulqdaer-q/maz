@@ -14,6 +14,7 @@ const Page = () => {
   const [formData, setFormData] = useState({
     country: '',
     industry: '',
+    company: "",
     gender: '',
     type: '',
     minSalary: 0,
@@ -33,10 +34,12 @@ const Page = () => {
   const handleApply = (id: number) => {
 
   }
-  function generateAPIUrl(country, industry, gender, type, minAge, maxAge, maxSalary, minSalary) {
+  function generateAPIUrl(country, industry, company, gender, type, minAge, maxAge, maxSalary, minSalary) {
     let params = "";
     if (country) params += `filters[country][id][$eq]=${country}&`
     if (industry) params += `filters[industries][id][$eq]=${industry}&`
+    if (company) params += `filters[company][id][$eq]=${company}&`
+
     if (gender) params += `filters[genderPerfrence][$eq]=${gender}&`
     if (type) params += `filters[employmentType][$eq]=${type}&`
     if (minAge) params += `filters[minimumAge][$gte]=${minAge}&`
@@ -46,7 +49,7 @@ const Page = () => {
     return params;
   }
   useEffect(() => {
-    const api = generateAPIUrl(formData.country, formData.industry, formData.gender, formData.type, formData.minAge, formData.maxAge, formData.maxSalary, formData.minSalary)
+    const api = generateAPIUrl(formData.country, formData.industry, formData.company, formData.gender, formData.type, formData.minAge, formData.maxAge, formData.maxSalary, formData.minSalary)
     setP(api);
   }, [formData]);
   return (

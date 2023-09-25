@@ -1,3 +1,5 @@
+
+import useCompanies from '@/app/hooks/useCompanies';
 import useCountries from '@/app/hooks/useCountries';
 import useIndustries from '@/app/hooks/useIndustries';
 import { Countries } from '@/types/Country';
@@ -24,8 +26,10 @@ const Filter = ({
 }: props) => {
     const countries = useCountries();
     const industries = useIndustries();
+    const companies = useCompanies();
+
     const handleChange = (name, value) => {
-        console.log(formData.country)
+
         console.log({ name, value }, "ds")
         setFormData((prevData) => ({
             ...prevData,
@@ -45,6 +49,11 @@ const Filter = ({
             key: '2',
             label: 'Industry',
             children: <Select style={{width:'100%'}} showSearch optionFilterProp='label' options={industries} onChange={(e) => {handleChange('industry', e)}} />
+        },
+        {
+            key: '7',
+            label: 'Companies',
+            children: <Select style={{width:'100%'}} showSearch optionFilterProp='label' options={companies} onChange={(e) => {handleChange('company', e)}} />
         },
         {
             key: '3',
@@ -88,7 +97,7 @@ const Filter = ({
     return (
         <div className=' w-72  h-[700px] border-t-4 border-primary rounded-md fixed  overflow-y-scroll'>
             <h1 className=' m-2'><FilterOutlined className='mx-2' /> <span className=' text-xl first-letter:'>Filter</span></h1>
-            <Collapse defaultActiveKey={['1', '2', '3', '4', '5', '6']} bordered={false} items={items} />
+            <Collapse className='flex flex-col' defaultActiveKey={['3', '4', '5', '6']} bordered={false} items={items} />
         </div>
     )
 }

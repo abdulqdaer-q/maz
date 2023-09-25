@@ -34,7 +34,7 @@ function JobCard({
             <h1 className="font-semibold text-xl text-primary mb-3">{title}</h1>
             <p className=" font-semibold  text-sm  mb-3">{companyName}  <span className=" text-gray-400  font-light"> . {location}</span></p>
             <p className="    mb-3 line-clamp-2 ">{description}</p>
-            <p className=" text-gray-900"><DollarOutlined className="mr-2" /> ${minsalary} - ${maxsalary}</p>
+            <p className=" text-gray-900"><DollarOutlined className="mr-2" /> S.P {minsalary} - S.P {maxsalary}</p>
             <div className="flex justify-between items-center py-5">
                 <p className=" text-gray-400 text-sm">{time}</p>
                 <Button type="primary" className="  font-bold text-sm" onClick={onApply}>Details</Button>

@@ -92,7 +92,7 @@ const Index = ({ id, ...rest }: Props) => {
       ${values.title} has been posted !`,
 
     });
-    router.push("../find-job")
+    router.push("../company/profile")
 
   };
 
