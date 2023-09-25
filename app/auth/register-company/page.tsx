@@ -47,7 +47,7 @@ const MyForm = () => {
       key: submitKey,
     });
 
-    router.push("/postjob");
+    router.push("/company/profile");
   };
 
 

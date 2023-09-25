@@ -23,7 +23,7 @@ function Navbar() {
   const { onlineUsers } = useSocketContext();
   const [options, setOptions] = useState<Option[]>([]);
   const [search, setSearch] = useState('');
-
+  console.log(user)
   useEffect(() => {
     const fn = async () => {
       const { data: users } = await axios.get<User[]>(`/users?populate=userInfo,company&filters[$or][0][userInfo][firstName][$containsi]=${search}&filters[$or][1][userInfo][lastName][$containsi]=${search}&filters[$or][2][company][companyName][$containsi]=${search}`);
