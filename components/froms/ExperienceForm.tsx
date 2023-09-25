@@ -62,7 +62,6 @@ export default ({ id, onAfterSubmit, user, ...rest }: Props) => {
   if (loading) {
     return <></>;
   }
-
   return (
     <FillInformationWrapper
       title={`Professional details`}
@@ -117,7 +116,8 @@ export default ({ id, onAfterSubmit, user, ...rest }: Props) => {
           tooltip="This is a required field"
           label="Start Date"
           name="startDate"
-          rules={[{ required: true, message: "Start Date is required" , type:'date' }]}
+          rules={[{ required: true, message: "Start Date is required" , type:'date',
+        }]}
         >
           <DatePicker picker="month" className="w-full" />
         </Form.Item>
@@ -133,11 +133,23 @@ export default ({ id, onAfterSubmit, user, ...rest }: Props) => {
         <Form.Item
           label="End Date"
           name="endDate"
-          dependencies={["isCurrentRole"]}
+          dependencies={["isCurrentRole",'startDate']}
           rules={[
             {
               required: !isWorkingHere,
+              
+              
+
             },
+            ({getFieldValue}) => ({
+              validator: (_, value) => {
+                const x = getFieldValue('startDate');;
+                
+                if (value >= x) return Promise.resolve();
+                return Promise.reject(new Error('end Date must be after start Date'))
+                
+              }
+            })
           ]}
         >
           <DatePicker
