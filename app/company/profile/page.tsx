@@ -25,7 +25,7 @@ const Page = () => {
 
   return (
     <>
-      <CompanyProfile setReload={setForceReload} user={user} showEdit />;
+      <CompanyProfile setReload={setForceReload} user={user}  />;
       <PostedJob />
     </>
   )

@@ -12,7 +12,6 @@ const Page = () => {
   const [apply, setApply] = useState<boolean>(false);
   const [idJob, setIdJob] = useState<number>(-1);
   const [formData, setFormData] = useState({
-
     country: '',
     industry: '',
     gender: '',
@@ -30,7 +29,8 @@ const Page = () => {
   const handleOpenApply = (id: number) => {
     setApply(true)
     setIdJob(id)
-    console.log(id);
+  }
+  const handleApply = (id: number) => {
 
   }
   function generateAPIUrl(country, industry, gender, type, minAge, maxAge, maxSalary, minSalary) {
