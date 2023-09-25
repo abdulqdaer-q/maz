@@ -103,14 +103,20 @@ const ApplyJob = ({
         <div className={`w-[25rem]   border-t-4 border-primary rounded-md    ${isPostedJob ? "" : "fixed overflow-y-scroll"}`} >
             <div className='flex  justify-end mt-3'>
                 {isPostedJob ? "" : <CloseOutlined className=' ' onClick={() => setIsOpen(false)} />}
-                {posted ? <div className=' flex gap-3'><Button type='primary' className=' bg-green-400' onClick={() => { }}>Show Candidates</Button><Button className=' ' danger onClick={async () => {
+                {posted ? <div className=' flex gap-3'><Button type='primary' className=' bg-green-400' onClick={() => { router.push(`../candidates?job=${id}`) }}>Show Candidates</Button><Button className=' ' danger onClick={async () => {
                     await axios.delete("/jobs/" + id);
                     console.log(p)
                     message.success("deleted successfully");
                     setp((p) => !p);
                     console.log(p)
                 }}>Delete</Button>  </div> : ""}
-                {draft ? <div className=' flex gap-3'><Button className=' bg-green-400' onClick={() => { }}>Edit</Button>
+                {draft ? <div className=' flex gap-3'><Button className=' ' danger onClick={async () => {
+                    await axios.delete("/jobs/" + id);
+                    console.log(p)
+                    message.success("deleted successfully");
+                    setp((p) => !p);
+                    console.log(p)
+                }}>Delete</Button>
                     <Button type='primary' className=' bg-green-400' onClick={async () => {
                         await axios.put("/jobs/" + id, { data: { publishedAt: new Date() } });
                         console.log(p)
