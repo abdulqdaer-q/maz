@@ -69,6 +69,10 @@ const MyForm = () => {
             className="w-full"
             rules={[
               { required: true, message: "Please input your company Name!" },
+              {
+                type: "string",
+                message: 'Name can only include char',
+              },
             ]}
             tooltip="This is a required field"
           >
