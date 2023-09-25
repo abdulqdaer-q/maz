@@ -129,6 +129,7 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
           setReload((p) => !p);
           setOpen(false);
           setLangOpen(false);
+          setSelectedSpeciality(undefined);
         }}
         key={selectedSpeciality?.id}
         onCancel={() => {
@@ -138,10 +139,7 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
         }}
       />
       <SkillsFormModal default={user.userInfo?.skills?.map(e => e.id)} setReload={setReload} setOpen={setSkillsOpen} open={skillsOpen} />
-      <Container>
-        {showEdit && <SearchJobBar />}
-        
-      </Container>
+      
       <div className="bg-gray-200 w-full py-10">
         <Container>
         
@@ -262,7 +260,7 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                           okText="Yes"
                           cancelText="No"
                           onConfirm={async () => {
-                            await axios.delete("/jobs/" + id);
+                            await axios.delete("/specialities/" + e.id);
                             message.success("deleted successfully");
                             setReload((p) => !p);
                           }}

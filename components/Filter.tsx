@@ -8,6 +8,7 @@ import { Gender } from '@/types/User';
 import { axios } from '@/utils/axios';
 import { FilterOutlined } from '@ant-design/icons';
 import { Checkbox, Collapse, CollapseProps, InputNumber, Radio, Select, Slider } from 'antd'
+import Input from 'antd/es/input/Input';
 import React, { useEffect, useState } from 'react'
 const text = `
   A dog is a type of domesticated animal.
@@ -40,6 +41,12 @@ const Filter = ({
     };
 
     const items: CollapseProps['items'] = [
+        {
+
+            key: '0',
+            label: 'Search',
+            children: <Input onChange={(e) => {handleChange('search', e.target.value)}} />
+        },
         {
             key: '1',
             label: 'Country',
