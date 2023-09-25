@@ -12,13 +12,13 @@ function PromotionFeed() {
   const [stats, setStats] = useState<any>({});
   useEffect(() => {
     const fn = async () => {
-      const _stats:any = {};
-      const {total} = await axios.get('/user-infos?pagination[limit]=1');
+      const _stats: any = {};
+      const { total } = await axios.get('/user-infos?pagination[limit]=1');
       _stats['users'] = total;
-      const {total: totalCompanies} = await axios.get('/companies?pagination[limit]=1');
-      _stats['companies']=totalCompanies;
-      const {total: totalJobs} = await axios.get('/jobs?pagination[limit]=1');
-      _stats['jobs']=totalJobs;
+      const { total: totalCompanies } = await axios.get('/companies?pagination[limit]=1');
+      _stats['companies'] = totalCompanies;
+      const { total: totalJobs } = await axios.get('/jobs?pagination[limit]=1');
+      _stats['jobs'] = totalJobs;
 
       setStats(_stats);
     };
@@ -26,7 +26,7 @@ function PromotionFeed() {
   }, []);
   return (
     <div>
-      
+
       <section className="flex border border-b-gray-300 pb-10">
         <div className="flex flex-col justify-center ml-16 mt-20">
           <h2 className="text-blue-500 text-4xl">COWORK</h2>
@@ -35,16 +35,7 @@ function PromotionFeed() {
             The job marketplace and community that connects and matches
             companies with remote professionals
           </p>
-          <div className="flex space-x-3 items-center">
-            <button className=" bg-blue-500 rounded-3xl px-8 py-1 text-white ">
-              <Link href="/postjob">Post Jobs</Link>
-            </button>
 
-            <p>or</p>
-            <button className="border border-blue-500 rounded-3xl px-8 py-1 text-blue-500">
-              <Link href="/find-job">Find Work</Link>
-            </button>
-          </div>
         </div>
         <Image src="/logo.png" alt="logo" height={400} width={400} />
       </section>
@@ -56,29 +47,29 @@ function PromotionFeed() {
         </h1>
 
         <div className="mx-auto mt-5 container py-5">
-      
-      <Row gutter={16} className='my-5'>
-        <Col span={8}>
-          <Card>
-            <h2>Total Users</h2>
-            <p>Over {stats?.['users']} registered users</p>
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <h2>Total Companies</h2>
-            <p>We have {stats?.['companies']} Compnies Registered With us </p>
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <h2>Job Listings</h2>
-            <p>More than {stats?.['jobs']}  job listings</p>
-          </Card>
-        </Col>
-      </Row>
-      {/* Add more statistics here using Row, Col, and Card components */}
-    </div>
+
+          <Row gutter={16} className='my-5'>
+            <Col span={8}>
+              <Card>
+                <h2>Total Users</h2>
+                <p>Over {stats?.['users']} registered users</p>
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card>
+                <h2>Total Companies</h2>
+                <p>We have {stats?.['companies']} Compnies Registered With us </p>
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card>
+                <h2>Job Listings</h2>
+                <p>More than {stats?.['jobs']}  job listings</p>
+              </Card>
+            </Col>
+          </Row>
+          {/* Add more statistics here using Row, Col, and Card components */}
+        </div>
       </section>
       <section>
         <h1 className="text-4xl  mt-12 text-gray-700 text-center">
