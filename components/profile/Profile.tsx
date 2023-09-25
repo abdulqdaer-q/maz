@@ -40,8 +40,8 @@ import SpecialityFormModal from "../modals/SpecialityFormModal";
 
 const getPercentage = (user: User) => {
 
-  return ((user.userInfo?.educations ? 1 : 0) * 10
-    + (user.userInfo?.experiences ? 1 : 0) * 10 +
+  return (((user.userInfo?.educations?.length || 0) > 0 ? 1 : 0) * 10
+    + ((user.userInfo?.experiences?.length || 0) > 0 ? 1 : 0) * 10 +
     (Math.min(1, (user.userInfo?.specialities?.length || 0) / 3) * 20.0) +
     (Math.min(1, (user.userInfo?.languages?.length || 0) / 2) * 20) + (Math.min(1, (user.userInfo?.skills?.length || 0) / 4) * 20) + 20).toFixed(2);
 
