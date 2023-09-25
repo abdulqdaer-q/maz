@@ -21,6 +21,7 @@ const Page = () => {
     maxSalary: 0,
     minAge: 0,
     maxAge: 0,
+    search: ''
   });
   const [p, setP] = useState();
 
@@ -34,7 +35,7 @@ const Page = () => {
   const handleApply = (id: number) => {
 
   }
-  function generateAPIUrl(country, industry, company, gender, type, minAge, maxAge, maxSalary, minSalary) {
+  function generateAPIUrl(country, industry, company, gender, type, minAge, maxAge, maxSalary, minSalary, search) {
     let params = "";
     if (country) params += `filters[country][id][$eq]=${country}&`
     if (industry) params += `filters[industries][id][$eq]=${industry}&`
@@ -46,10 +47,11 @@ const Page = () => {
     if (maxAge) params += `filters[maximumAge][$lte]=${maxAge}&`
     if (maxSalary) params += `filters[maximumSalary][$lte]=${maxSalary}&`
     if (minSalary) params += `filters[minimumSalary][$gte]=${minSalary}&`
+    if (search) params += `filters[title][$contains]=${search}&`
     return params;
   }
   useEffect(() => {
-    const api = generateAPIUrl(formData.country, formData.industry, formData.company, formData.gender, formData.type, formData.minAge, formData.maxAge, formData.maxSalary, formData.minSalary)
+    const api = generateAPIUrl(formData.country, formData.industry, formData.company, formData.gender, formData.type, formData.minAge, formData.maxAge, formData.maxSalary, formData.minSalary, formData.search)
     setP(api);
   }, [formData]);
   return (
