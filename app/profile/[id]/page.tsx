@@ -18,6 +18,9 @@ const Page = () => {
       const { data: realUser } = await axios.get<User>(
         `/users/${+id}?populate=userInfo,userInfo.photo,company,userInfo.residenceCountry,userInfo.nationality,userInfo.educations,userInfo.experiences,userInfo.cv,userInfo.experiences.companyIndustry,userInfo.experiences.jobLocation,userInfo.educations.country,userInfo.specialities,userInfo.skills,userInfo.languages`
       );
+      if (!realUser.userInfo) {
+        router.push('/company/profile/'+realUser.id)
+      }
       setUser(realUser);
     };
     fetchUser();
@@ -57,7 +60,12 @@ const Page = () => {
   if (!user) {
     return <h1>Loading</h1>;
   }
-
+  console.log({user});
+  
+  if (!user.userInfo) {
+    
+    return;
+  }
   return <Profile setReload={() => {}} user={user} showEdit={false} />;
 };
 export default Page;

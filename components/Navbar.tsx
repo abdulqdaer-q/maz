@@ -4,7 +4,7 @@ import { Option } from '@/types/Option';
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useSocketContext } from "@/contexts/SocketContext";
 import { getPhotoLink } from "@/lib/getPhotoLink";
-import { UserInfo } from "@/types/User";
+import { User, UserInfo } from "@/types/User";
 import { axios } from "@/utils/axios";
 import { BASE_SERVEFR_URL } from "@/utils/constant";
 import { removeToken } from "@/utils/helper";
@@ -26,10 +26,11 @@ function Navbar() {
   
   useEffect(( ) => {
       const fn = async () => {
-          const {data: users} = await axios.get<UserInfo[]>(`/user-infos?populate=user&filters[$or][0][firstName][$containsi]=${search}&filters[$or][1][lastName][$containsi]=${search}`);
-          setOptions(users.filter(e => !!e.user).map(e => ({
-              label: e.firstName + " " + e.lastName,
-              value: e.user!.id
+          const {data: users} = await axios.get<User[]>(`/users?populate=userInfo,company&filters[$or][0][userInfo][firstName][$containsi]=${search}&filters[$or][1][userInfo][lastName][$containsi]=${search}&filters[$or][2][company][companyName][$containsi]=${search}`);
+
+          setOptions(users.map(e => ({
+              label: e.userInfo ? (e.userInfo?.firstName + " " + e.userInfo?.lastName ) : e.company!.companyName,
+              value: e.id
           })));
       }
       fn()

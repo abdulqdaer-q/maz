@@ -30,6 +30,7 @@ function SearchJobBar() {
               suffixIcon={<CompassOutlined />}
               size="large"
               options={countries}
+              showSearch optionFilterProp="label"
             />
           </Form.Item>
         </Col>

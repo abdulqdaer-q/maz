@@ -7,7 +7,7 @@ export default () => {
   const [countries, setCountries] = useState<Option[]>();
   useEffect(() => {
     const fetchCountries = async () => {
-      const { data } = await axios.get<Countries>("/countries");
+      const { data } = await axios.get<Countries>("/countries?pagination[limit]=-1");
       setCountries(
         data.map((e) => ({
           label: e.name,

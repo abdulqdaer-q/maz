@@ -111,7 +111,7 @@ const MyForm = () => {
             name="country"
             rules={[{ required: true, message: "Company Location is required" }]}
           >
-            <Select size="large" options={countries} placeholder="Choose Country" />
+            <Select size="large" showSearch optionFilterProp="label" options={countries} placeholder="Choose Country" />
           </Form.Item>
         </Col>
         <Col span={24}>

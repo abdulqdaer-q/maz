@@ -7,7 +7,7 @@ import { LanguageLevel, Speciality } from "@/types/Specaility";
 import { User } from "@/types/User";
 import { Views } from "@/types/View";
 import { axios } from "@/utils/axios";
-import { DeleteFilled, EditOutlined, PlusOutlined, UserOutlined } from "@ant-design/icons";
+import { DeleteFilled, EditOutlined, MessageFilled, PlusOutlined, UserOutlined } from "@ant-design/icons";
 import {
   Avatar,
   Button,
@@ -38,6 +38,14 @@ import Container from "../layout/container";
 import SkillsFormModal from "../modals/SkillsFormModal";
 import SpecialityFormModal from "../modals/SpecialityFormModal";
 
+const getPercentage = (user: User) => {
+  
+  return ((user.userInfo?.educations ? 1 :0 ) * 10
+       + (user.userInfo?.experiences ? 1 :0 ) * 10 + 
+          (Math.min(1, (user.userInfo?.specialities?.length|| 0) / 3) * 20.0 ) + 
+  (Math.min(1, (user.userInfo?.languages?.length || 0) / 2) * 20 ) + (Math.min(1, (user.userInfo?.skills?.length|| 0 )/ 4) * 20 ) + 20).toFixed(2);
+  
+}
 
 type Props = {
   user: User;
@@ -45,7 +53,7 @@ type Props = {
   setReload: React.Dispatch<React.SetStateAction<boolean>>;
 };
 const Profile = ({ user, showEdit = false, setReload }: Props) => {
-  const [percentage, setPercentage] = useState(20);
+  const percentage = getPercentage(user);
   const [open, setOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [skillsOpen, setSkillsOpen] = useState(false);
@@ -131,13 +139,16 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
       />
       <SkillsFormModal default={user.userInfo?.skills?.map(e => e.id)} setReload={setReload} setOpen={setSkillsOpen} open={skillsOpen} />
       <Container>
-        <SearchJobBar />
+        {showEdit && <SearchJobBar />}
+        
       </Container>
-      <div className="bg-gray-200 w-full">
+      <div className="bg-gray-200 w-full py-10">
         <Container>
+        
           <Row gutter={10}>
             <Col span={8}>
-              <Card>
+              {showEdit && <Card>
+              
                 <Title className="!font-thin !text-gray-400" level={3}>
                   {showEdit ? "Your Profile Score" : "Profile Score"}
                 </Title>
@@ -153,7 +164,7 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                     Reach profile strength of 80% to be assigned to more jobs.
                   </p>
                 )}
-              </Card>
+              </Card>}
 
               {showEdit && (
                 <Card className="mt-5">
@@ -220,7 +231,8 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                   ))}
                 </Card>
               )}
-              {(showEdit || !!user.userInfo?.specialities?.length) && <Card className="mt-5">
+              {(showEdit || !!user.userInfo?.specialities?.length) &&
+               <Card className="mt-5">
                 <div className="flex justify-between">
                   <Title level={2}>Specialities</Title>
                   {showEdit && <div>
@@ -235,7 +247,8 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                 </div>
                 <Row>
                   {user.userInfo?.specialities?.map((e) => (
-                    <div className="flex justify-between " key={e.id}>
+                    !showEdit ?<KeyValueColumn label={e.name} value={e.level} /> : 
+                    <div className={`flex justify-between `} key={e.id}>
                       <KeyValueColumn label={e.name} value={e.level} />
                       {showEdit && <div className="flex">
                         <Button type="link" onClick={() => {
@@ -307,6 +320,7 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                 </div>
                 <Row>
                   {user.userInfo?.languages?.map((e) => (
+                    !showEdit ? <KeyValueColumn label={e.language} value={e.level} /> : 
                     <div className="flex justify-between " key={e.id}>
                       <KeyValueColumn label={e.language} value={e.level} />
                       {showEdit && <div className="flex">
@@ -329,16 +343,19 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                           <Button type="link" danger icon={<DeleteFilled />} />
                         </Popconfirm>
 
-                      </div>}
+                      </div>
+                        }
                     </div>
                   ))}
                 </Row>
               </Card>}
             </Col>
             <Col span={16}>
+              
               <MainInfoCard
                 className="mb-5"
                 user={user}
+                showEdit={showEdit}
                 latestEducation={latestEducation}
                 yearsOfExperience={yearsOfExperience}
               />
@@ -581,14 +598,19 @@ type MainCardProps = {
   latestEducation?: string;
   yearsOfExperience?: string;
   className?: string;
+  showEdit: boolean;
 };
 const MainInfoCard = ({
   user,
   yearsOfExperience,
   latestEducation,
   className,
-}: MainCardProps) => (
-  <Card className={className}>
+  showEdit
+}: MainCardProps) => 
+ {
+  const {user: loggedInUser} = useAuthContext();
+  const router = useRouter();
+  return ( <Card className={className}>
     <Row gutter={20}>
       <Col span={6}>
         <Avatar
@@ -599,8 +621,28 @@ const MainInfoCard = ({
         />
       </Col>
       <Col span={18}>
+      
         <Title level={3}>
-          {user.userInfo?.firstName} {user.userInfo?.lastName}
+          {user.userInfo?.firstName} {user.userInfo?.lastName} {!showEdit && <Button onClick={async () => {
+            if (!loggedInUser?.id) {
+              message.error("please login");
+              return;
+            }
+            const user1 = Math.min(loggedInUser.id, user.id);
+            const user2 = Math.max(loggedInUser.id, user.id);
+            const {data: fetchedData} = await axios.get(`/chats?populate=user1,user2&filters[user1][id][$eq]=${user1}&filters[user2][id][$eq]=${user2}`)
+            if (fetchedData.length) {
+              router.replace('/chat?#@'+fetchedData[0].id)
+              return;
+            }
+            const { data } = await axios.post("/chats", {
+              data: {
+                user1,
+                user2,
+              },
+            });
+            router.push('/chat?#@'+data.id)
+          }} type="link" size="large" icon={<MessageFilled/>}>  </Button>}
         </Title>
         <Row gutter={5} className="items-center">
           {[
@@ -630,8 +672,8 @@ const MainInfoCard = ({
         </Row>
       </Col>
     </Row>
-  </Card>
-);
+  </Card>)
+ };
 
 export const KeyValueColumn = ({
   label,
@@ -640,14 +682,14 @@ export const KeyValueColumn = ({
   label: string;
   value: any;
 }) => (
-  <Fragment>
+  <>
     <Col span={8} className="mt-1">
       <p className="font-bold">{label}</p>
     </Col>
     <Col span={16} className="mt-1">
       <p className="text-gray-500">{value}</p>
     </Col>
-  </Fragment>
+  </>
 );
 
 export default Profile;

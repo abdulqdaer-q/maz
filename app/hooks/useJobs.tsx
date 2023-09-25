@@ -9,6 +9,7 @@ export default (id?: any, filters?: string) => {
     useEffect(() => {
         const fetchJobs = async () => {
             if (id) {
+                if (id !== -1) return;
                 const { data } = await axios.get<Job>(`/jobs/${id}?populate[industries][fields][0]=title&populate[country][fields][0]=name&populate[company][fields][0]=companyName&fields[0]=title&fields[1]=minimumSalary&fields[2]=maximumSalary&fields[3]=numberOfVacancies&fields[4]=employmentType&fields[5]=isWorkFromHome&fields[6]=jobDescription&fields[7]=desiredSkills&fields[8]=genderPerfrence&fields[9]=minimumAge&fields[10]=maximumAge&fields[11]=minimumYearsOfExperience`);
                 setJobs(
                     data

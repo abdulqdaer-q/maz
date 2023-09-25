@@ -99,7 +99,7 @@ export default ({ id, onAfterSubmit, user, ...rest }: Props) => {
           name="companyIndustry"
           rules={[{ required: true, message: "Company Industry is required" }]}
         >
-          <Select options={industries} placeholder="Choose Industry" />
+          <Select  showSearch optionFilterProp="label" options={industries} placeholder="Choose Industry" />
         </Form.Item>
       </Col>
       <Col span={24}>
@@ -109,7 +109,7 @@ export default ({ id, onAfterSubmit, user, ...rest }: Props) => {
           name="jobLocation"
           rules={[{ required: true, message: "Job Location is required" }]}
         >
-          <Select options={countries} placeholder="Choose Country" />
+          <Select options={countries} showSearch optionFilterProp="label" placeholder="Choose Country" />
         </Form.Item>
       </Col>
       <Col span={24}>

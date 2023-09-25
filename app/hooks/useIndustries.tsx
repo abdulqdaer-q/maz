@@ -7,7 +7,7 @@ export default () => {
   const [industries, setIndustries] = useState<Option[]>();
   useEffect(() => {
     const fetchCountries = async () => {
-      const { data } = await axios.get<Industries>("/industries");
+      const { data } = await axios.get<Industries>("/industries?pagination[limit]=-1");
       setIndustries(
         data.map((e) => ({
           label: e.title,

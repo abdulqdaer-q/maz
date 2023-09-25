@@ -10,7 +10,7 @@ import useJobs from "../hooks/useJobs";
 
 const Page = () => {
   const [apply, setApply] = useState<boolean>(false);
-  const [idJob, setIdJob] = useState<number>(1);
+  const [idJob, setIdJob] = useState<number>(-1);
   const [formData, setFormData] = useState({
 
     country: '',

@@ -114,6 +114,7 @@ const Index =({onAfterSubmit, id, ...rest }: Props) => {
           <Select
             options={countries}
             placeholder="Select Country"
+            showSearch optionFilterProp="label"
           />
         </Form.Item>
       </Col>

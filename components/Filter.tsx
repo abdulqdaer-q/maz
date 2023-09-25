@@ -5,7 +5,7 @@ import { EmploymentType } from '@/types/Job';
 import { Gender } from '@/types/User';
 import { axios } from '@/utils/axios';
 import { FilterOutlined } from '@ant-design/icons';
-import { Checkbox, Collapse, CollapseProps, InputNumber, Radio, Slider } from 'antd'
+import { Checkbox, Collapse, CollapseProps, InputNumber, Radio, Select, Slider } from 'antd'
 import React, { useEffect, useState } from 'react'
 const text = `
   A dog is a type of domesticated animal.
@@ -39,20 +39,12 @@ const Filter = ({
         {
             key: '1',
             label: 'Country',
-            children:
-                <Radio.Group className='flex flex-col' name='country' onChange={(value) => handleChange(value.target.name, value.target.checked ? value.target.value : undefined)} value={formData.country}>
-                    {countries?.map(country => <Radio value={country.value} >{country.label}</Radio>)}
-                    <Radio value={""}  >{"All Countries "}</Radio>
-                </Radio.Group>
+            children: <Select style={{width:'100%'}} showSearch optionFilterProp='label' options={countries} onChange={(e) => {handleChange('country', e)}} />
         },
         {
             key: '2',
             label: 'Industry',
-            children: <Radio.Group className='flex flex-col' name='industry' onChange={(value) => handleChange(value.target.name, value.target.checked ? value.target.value : undefined)} value={formData.industry}>
-                {industries?.map(industry => <Radio value={industry.value} >{industry.label}</Radio>)}
-                <Radio value={""}  >{"All Industries "}</Radio>
-            </Radio.Group>
-            ,
+            children: <Select style={{width:'100%'}} showSearch optionFilterProp='label' options={industries} onChange={(e) => {handleChange('industry', e)}} />
         },
         {
             key: '3',

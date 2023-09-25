@@ -5,7 +5,7 @@ import Message from "./Message";
 import Sidebar from "./ChatRoomSideBar";
 import { useAuthContext } from "@/contexts/AuthContext";
 
-import { useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter,useSelectedLayoutSegment } from "next/navigation";
 import { axios } from "@/utils/axios";
 import { message } from "antd";
 import { useSocketContext } from "@/contexts/SocketContext";
@@ -27,7 +27,14 @@ const ChatRoom: React.FC = () => {
     { chat: string; message: string; sender: string; isSent: boolean }[]
   >([]);
   const [inputMessage, setInputMessage] = useState("");
+  const params = useParams();
+  useEffect(() => {
+    setActiveChat( +window?.location?.hash?.split("#@")?.[1] || 0)
+  }, [params])
+  
   const [activeChat, setActiveChat] = useState<number | null>( (typeof window!=='undefined') ? +window?.location?.hash?.split("#@")?.[1] : null);
+  console.log({activeChat});
+  
   const [selectedChat, setSelectedChat] = useState<{
     name: string;
     image: string;

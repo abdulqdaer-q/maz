@@ -214,7 +214,7 @@ const PersonalInformation = ({
           label="Choose Your Location"
           rules={[{ required: true }]}
         >
-          <Select options={countries} placeholder="Select Country"></Select>
+          <Select options={countries} showSearch optionFilterProp="label" placeholder="Select Country"></Select>
         </Form.Item>
       </Col>
       <Col span={24}>
@@ -224,7 +224,7 @@ const PersonalInformation = ({
           label="Choose Your Nationality"
           rules={[{ required: true }]}
         >
-          <Select options={countries} placeholder="Select Country"></Select>
+          <Select options={countries} showSearch optionFilterProp="label" placeholder="Select Country"></Select>
         </Form.Item>
       </Col>
       <Form.Item

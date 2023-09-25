@@ -84,13 +84,16 @@ const Sidebar: React.FC<SidebarProps> = ({ activeChat, onChatSelect }) => {
           if (firstRender) {
             setFirstRender(false);
             const f = chats.find(e => e.id === activeChat);
+            console.log({f});
+            
             if (f)
             onChatSelect(f.id, f.image, f.name, f.userId)
           }
       };
+      fetcher();
       const x = setInterval(() => {
         fetcher();
-      }, 2500)
+      }, 15000)
       return () => clearInterval(x); 
     }
   }, [user, relodChats]);
@@ -146,6 +149,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeChat, onChatSelect }) => {
             onChange={(e) => {
               setSelectedUser(e);
             }}
+            showSearch
+            optionFilterProp="label"
             options={users
               .filter(
                 (e) =>
