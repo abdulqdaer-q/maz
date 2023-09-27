@@ -39,12 +39,12 @@ import SkillsFormModal from "../modals/SkillsFormModal";
 import SpecialityFormModal from "../modals/SpecialityFormModal";
 
 const getPercentage = (user: User) => {
-  
-  return (((user.userInfo?.educations?.length || 0) >0 ? 1 :0 ) * 10
-       + ((user.userInfo?.experiences?.length || 0) >0 ? 1 :0 ) * 10 + 
-          (Math.min(1, (user.userInfo?.specialities?.length|| 0) / 3) * 20.0 ) + 
-  (Math.min(1, (user.userInfo?.languages?.length || 0) / 2) * 20 ) + (Math.min(1, (user.userInfo?.skills?.length|| 0 )/ 4) * 20 ) + 20).toFixed(2);
-  
+
+  return (((user.userInfo?.educations?.length || 0) > 0 ? 1 : 0) * 10
+    + ((user.userInfo?.experiences?.length || 0) > 0 ? 1 : 0) * 10 +
+    (Math.min(1, (user.userInfo?.specialities?.length || 0) / 3) * 20.0) +
+    (Math.min(1, (user.userInfo?.languages?.length || 0) / 2) * 20) + (Math.min(1, (user.userInfo?.skills?.length || 0) / 4) * 20) + 20).toFixed(2);
+
 }
 
 type Props = {
@@ -58,7 +58,7 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
   const [langOpen, setLangOpen] = useState(false);
   const [skillsOpen, setSkillsOpen] = useState(false);
   const [views, setViews] = useState<Views>([]);
-  const [selectedSpeciality, setSelectedSpeciality] = useState<Speciality|LanguageLevel>();
+  const [selectedSpeciality, setSelectedSpeciality] = useState<Speciality | LanguageLevel>();
   const getLatestEducation = () => {
     const degrees: { [key: string]: number } = Object.values(Degree).reduce(
       (bef, e, idx) => ({
@@ -139,14 +139,14 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
         }}
       />
       <SkillsFormModal default={user.userInfo?.skills?.map(e => e.id)} setReload={setReload} setOpen={setSkillsOpen} open={skillsOpen} />
-      
+
       <div className="bg-gray-200 w-full py-10">
         <Container>
-        
+
           <Row gutter={10}>
             <Col span={8}>
               {showEdit && <Card>
-              
+
                 <Title className="!font-thin !text-gray-400" level={3}>
                   {showEdit ? "Your Profile Score" : "Profile Score"}
                 </Title>
@@ -176,7 +176,7 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                     <Row key={view.id} gutter={10} className="mb-3">
                       <Col span={6}>
                         <Image
-                          src={getPhotoLink(view.userInfo!.photo.url)}
+                          src={getPhotoLink(view.userInfo!.photo?.url)}
                           className="!w-14 !h-14 rounded-full"
                           alt="avatar"
                         />
@@ -230,49 +230,49 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                 </Card>
               )}
               {(showEdit || !!user.userInfo?.specialities?.length) &&
-               <Card className="mt-5">
-                <div className="flex justify-between">
-                  <Title level={2}>Specialities</Title>
-                  {showEdit && <div>
-                    <Button
-                      icon={<PlusOutlined />}
-                      type="link"
-                      onClick={() => {
-                        setOpen(true);
-                      }}
-                    />
-                  </div>}
-                </div>
-                <Row>
-                  {user.userInfo?.specialities?.map((e) => (
-                    !showEdit ?<KeyValueColumn label={e.name} value={e.level} /> : 
-                    <div className={`flex justify-between `} key={e.id}>
-                      <KeyValueColumn label={e.name} value={e.level} />
-                      {showEdit && <div className="flex">
-                        <Button type="link" onClick={() => {
-                          setSelectedSpeciality(e);
+                <Card className="mt-5">
+                  <div className="flex justify-between">
+                    <Title level={2}>Specialities</Title>
+                    {showEdit && <div>
+                      <Button
+                        icon={<PlusOutlined />}
+                        type="link"
+                        onClick={() => {
                           setOpen(true);
-                        }} icon={<EditOutlined />} />
+                        }}
+                      />
+                    </div>}
+                  </div>
+                  <Row>
+                    {user.userInfo?.specialities?.map((e) => (
+                      !showEdit ? <KeyValueColumn label={e.name} value={e.level} /> :
+                        <div className={`flex justify-between `} key={e.id}>
+                          <KeyValueColumn label={e.name} value={e.level} />
+                          {showEdit && <div className="flex">
+                            <Button type="link" onClick={() => {
+                              setSelectedSpeciality(e);
+                              setOpen(true);
+                            }} icon={<EditOutlined />} />
 
-                        <Popconfirm
-                          title="Delete the Speciality"
-                          description="Are you sure to delete this Speciality?"
-                          okText="Yes"
-                          cancelText="No"
-                          onConfirm={async () => {
-                            await axios.delete("/specialities/" + e.id);
-                            message.success("deleted successfully");
-                            setReload((p) => !p);
-                          }}
-                        >
-                          <Button type="link" danger icon={<DeleteFilled />} />
-                        </Popconfirm>
+                            <Popconfirm
+                              title="Delete the Speciality"
+                              description="Are you sure to delete this Speciality?"
+                              okText="Yes"
+                              cancelText="No"
+                              onConfirm={async () => {
+                                await axios.delete("/specialities/" + e.id);
+                                message.success("deleted successfully");
+                                setReload((p) => !p);
+                              }}
+                            >
+                              <Button type="link" danger icon={<DeleteFilled />} />
+                            </Popconfirm>
 
-                      </div>}
-                    </div>
-                  ))}
-                </Row>
-              </Card>}
+                          </div>}
+                        </div>
+                    ))}
+                  </Row>
+                </Card>}
               {(showEdit || !!user.userInfo?.skills?.length) && <Card className="mt-5">
                 <div className="flex justify-between">
                   <Title level={2}>Skills</Title>
@@ -318,38 +318,38 @@ const Profile = ({ user, showEdit = false, setReload }: Props) => {
                 </div>
                 <Row>
                   {user.userInfo?.languages?.map((e) => (
-                    !showEdit ? <KeyValueColumn label={e.language} value={e.level} /> : 
-                    <div className="flex justify-between " key={e.id}>
-                      <KeyValueColumn label={e.language} value={e.level} />
-                      {showEdit && <div className="flex">
-                        <Button type="link" onClick={() => {
-                          setSelectedSpeciality(e);
-                          setLangOpen(true);
-                        }} icon={<EditOutlined />} />
+                    !showEdit ? <KeyValueColumn label={e.language} value={e.level} /> :
+                      <div className="flex justify-between " key={e.id}>
+                        <KeyValueColumn label={e.language} value={e.level} />
+                        {showEdit && <div className="flex">
+                          <Button type="link" onClick={() => {
+                            setSelectedSpeciality(e);
+                            setLangOpen(true);
+                          }} icon={<EditOutlined />} />
 
-                        <Popconfirm
-                          title="Delete the language"
-                          description="Are you sure to delete this language?"
-                          okText="Yes"
-                          cancelText="No"
-                          onConfirm={async () => {
-                            await axios.delete("/language-levels/" + e.id);
-                            message.success("deleted successfully");
-                            setReload((p) => !p);
-                          }}
-                        >
-                          <Button type="link" danger icon={<DeleteFilled />} />
-                        </Popconfirm>
+                          <Popconfirm
+                            title="Delete the language"
+                            description="Are you sure to delete this language?"
+                            okText="Yes"
+                            cancelText="No"
+                            onConfirm={async () => {
+                              await axios.delete("/language-levels/" + e.id);
+                              message.success("deleted successfully");
+                              setReload((p) => !p);
+                            }}
+                          >
+                            <Button type="link" danger icon={<DeleteFilled />} />
+                          </Popconfirm>
 
-                      </div>
+                        </div>
                         }
-                    </div>
+                      </div>
                   ))}
                 </Row>
               </Card>}
             </Col>
             <Col span={16}>
-              
+
               <MainInfoCard
                 className="mb-5"
                 user={user}
@@ -604,11 +604,10 @@ const MainInfoCard = ({
   latestEducation,
   className,
   showEdit
-}: MainCardProps) => 
- {
-  const {user: loggedInUser} = useAuthContext();
+}: MainCardProps) => {
+  const { user: loggedInUser } = useAuthContext();
   const router = useRouter();
-  return ( <Card className={className}>
+  return (<Card className={className}>
     <Row gutter={20}>
       <Col span={6}>
         <Avatar
@@ -619,7 +618,7 @@ const MainInfoCard = ({
         />
       </Col>
       <Col span={18}>
-      
+
         <Title level={3}>
           {user.userInfo?.firstName} {user.userInfo?.lastName} {!showEdit && <Button onClick={async () => {
             if (!loggedInUser?.id) {
@@ -628,9 +627,9 @@ const MainInfoCard = ({
             }
             const user1 = Math.min(loggedInUser.id, user.id);
             const user2 = Math.max(loggedInUser.id, user.id);
-            const {data: fetchedData} = await axios.get(`/chats?populate=user1,user2&filters[user1][id][$eq]=${user1}&filters[user2][id][$eq]=${user2}`)
+            const { data: fetchedData } = await axios.get(`/chats?populate=user1,user2&filters[user1][id][$eq]=${user1}&filters[user2][id][$eq]=${user2}`)
             if (fetchedData.length) {
-              router.replace('/chat?#@'+fetchedData[0].id)
+              router.replace('/chat?#@' + fetchedData[0].id)
               return;
             }
             const { data } = await axios.post("/chats", {
@@ -639,8 +638,8 @@ const MainInfoCard = ({
                 user2,
               },
             });
-            router.push('/chat?#@'+data.id)
-          }} type="link" size="large" icon={<MessageFilled/>}>  </Button>}
+            router.push('/chat?#@' + data.id)
+          }} type="link" size="large" icon={<MessageFilled />}>  </Button>}
         </Title>
         <Row gutter={5} className="items-center">
           {[
@@ -671,7 +670,7 @@ const MainInfoCard = ({
       </Col>
     </Row>
   </Card>)
- };
+};
 
 export const KeyValueColumn = ({
   label,
