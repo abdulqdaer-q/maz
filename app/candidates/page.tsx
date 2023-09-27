@@ -14,7 +14,6 @@ import "react-circular-progressbar/dist/styles.css";
 const points = (location, nationality, age, sex, experiences, educations, skills, sexPref, minAge,country, nationalities) => {
     console.log(location, nationality, age, sex, experiences, skills)
     let totalPoints = 0;
-    console.log({nationalities, nationality});
     
     (location ? totalPoints += (location?.id === country?.id ?  5 : 2) : totalPoints += 0);
     (!!nationality ? ( totalPoints += (nationalities)?.find(e => e.id === nationality.id) ? 5: 2  ) : totalPoints += 0);

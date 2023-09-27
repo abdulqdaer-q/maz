@@ -23,7 +23,8 @@ export default (id?: any, filters?: string) => {
                 
                 if (user?.userInfo?.id) {
                     const {data: apps} = await axios.get('/applications?populate=job,userInfo&filters[userInfo][id][$eq]='+ user.userInfo.id);
-                    data = data.filter(e => apps.some(x => x.job?.id !== e?.id))
+                    console.log({apps});
+                   
                 }
                 setJobs(
                     data?.map((e) => ({
@@ -48,6 +49,6 @@ export default (id?: any, filters?: string) => {
             }
         };
         fetchJobs();
-    }, [id, filters]);
+    }, [id, filters, user]);
     return jobs;
 };
